@@ -12,6 +12,7 @@ export default function ScoreEpisode() {
   const [rules, setRules] = useState<ScoringRule[]>([]);
   const [events, setEvents] = useState<Record<string, Record<string, number>>>({});
   const [saving, setSaving] = useState(false);
+  const [isFinalEpisode, setIsFinalEpisode] = useState(false);
   const router = useRouter();
   const supabase = createClient();
 
@@ -112,9 +113,20 @@ export default function ScoreEpisode() {
         </button>
       </div>
 
-      <p className="text-sm text-gray-500 mb-4">
-        Click cells to toggle events (1 = happened). For variable-point events (like idol saves), enter the number directly.
-      </p>
+      <div className="flex items-center gap-4 mb-4">
+        <p className="text-sm text-gray-500">
+          Click cells to toggle events (1 = happened). For variable-point events (like idol saves), enter the number directly.
+        </p>
+        <label className="flex items-center gap-2 text-sm whitespace-nowrap">
+          <input
+            type="checkbox"
+            checked={isFinalEpisode}
+            onChange={(e) => setIsFinalEpisode(e.target.checked)}
+            className="rounded"
+          />
+          Final episode?
+        </label>
+      </div>
 
       <div className="overflow-x-auto">
         <table className="text-sm border-collapse min-w-full">
@@ -131,7 +143,13 @@ export default function ScoreEpisode() {
             </tr>
           </thead>
           <tbody>
-            {rules.map((rule) => (
+            {rules.filter((rule) => {
+              const finalOnly = ["Made final group", "Vote in final group", "Won Survivor", "Won survivor"];
+              if (finalOnly.some((f) => rule.event_name.toLowerCase() === f.toLowerCase())) {
+                return isFinalEpisode;
+              }
+              return true;
+            }).map((rule) => (
               <tr key={rule.id}>
                 <td className="border p-2 bg-white sticky left-0 z-10 text-xs">
                   {rule.event_name}
