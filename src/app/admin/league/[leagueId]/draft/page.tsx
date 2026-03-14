@@ -251,17 +251,24 @@ export default function DraftPage() {
             <div className="flex flex-col gap-2 lg:max-h-[70vh] lg:overflow-y-auto">
               {survivors.map((s) => {
                 const count = draftCountFor(s.id);
-                const available = count < maxDrafts;
+                const remaining = maxDrafts - count;
+                let bgClass: string;
+                if (remaining <= 0) {
+                  bgClass = "bg-red-50 border-red-200 opacity-60 cursor-not-allowed";
+                } else if (remaining === 1) {
+                  bgClass = "bg-yellow-50 border-yellow-200 hover:bg-yellow-100 cursor-pointer";
+                } else if (count === 0) {
+                  bgClass = "bg-green-50 border-green-200 hover:bg-green-100 cursor-pointer";
+                } else {
+                  bgClass = "bg-blue-50 border-blue-200 hover:bg-blue-100 cursor-pointer";
+                }
+                const available = remaining > 0;
                 return (
                   <button
                     key={s.id}
                     onClick={() => available && makePick(s.id)}
                     disabled={!available}
-                    className={`border rounded-lg p-2 text-left text-sm transition-colors ${
-                      available
-                        ? "hover:bg-blue-50 hover:border-blue-300 cursor-pointer"
-                        : "opacity-40 cursor-not-allowed bg-gray-50"
-                    }`}
+                    className={`border rounded-lg p-2 text-left text-sm transition-colors ${bgClass}`}
                   >
                     <div className="font-medium">{s.name}</div>
                     <div className="text-xs text-gray-400">

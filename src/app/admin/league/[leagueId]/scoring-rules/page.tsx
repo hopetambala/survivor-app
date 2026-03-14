@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { createClient } from "../../../../../lib/supabase/client";
+import { DEFAULT_SCORING_RULES } from "../../../../../lib/scoring";
 import type { ScoringRule } from "../../../../../lib/supabase/types";
 
 export default function ScoringRulesPage() {
@@ -55,12 +56,27 @@ export default function ScoringRulesPage() {
     loadRules();
   }
 
+  async function handleResetToDefaults() {
+    if (!confirm("This will delete all current rules and restore the default set. Continue?")) return;
+    await supabase.from("scoring_rules").delete().eq("league_id", leagueId);
+    const rows = DEFAULT_SCORING_RULES.map((r) => ({ ...r, league_id: leagueId }));
+    await supabase.from("scoring_rules").insert(rows as Record<string, unknown>[]);
+    loadRules();
+  }
+
   return (
     <main className="min-h-screen p-4 max-w-2xl mx-auto">
       <button onClick={() => router.push(`/admin/league/${leagueId}`)} className="text-sm text-gray-500 hover:text-gray-800 mb-4 inline-block">
         &larr; Back to League
       </button>
       <h1 className="text-2xl font-bold mb-4">Scoring Rules</h1>
+
+      <button
+        onClick={handleResetToDefaults}
+        className="text-sm text-blue-600 underline hover:text-blue-800 mb-4 inline-block"
+      >
+        Reset to defaults
+      </button>
 
       <div className="flex flex-col gap-2 mb-6">
         {rules.map((rule) => (

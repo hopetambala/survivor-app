@@ -11,15 +11,12 @@ export const DEFAULT_SCORING_RULES: Omit<ScoringRule, "id" | "league_id" | "crea
   { event_name: "Uses idol (or successful dice)", points: 0.5, description: "0.5 per vote saved. Points go to the person who physically played it.", is_variable: true, sort_order: 7 },
   { event_name: "Voted off with idol", points: -3, description: "Per idol held when voted off.", is_variable: false, sort_order: 8 },
   { event_name: "Survived an elimination", points: 1, description: null, is_variable: false, sort_order: 9 },
-  { event_name: "Made final group", points: 2, description: "Final three in modern Survivor.", is_variable: false, sort_order: 10 },
-  { event_name: "Vote in final group", points: 0.5, description: "Per vote cast on you.", is_variable: true, sort_order: 11 },
-  { event_name: "Won Survivor", points: 7.5, description: "Assume all unshown votes go to winner. Gets final group points too.", is_variable: false, sort_order: 12 },
-  { event_name: "Has episode title or hashtag", points: 0.25, description: "Must be about a specific person/subset, not a whole tribe.", is_variable: false, sort_order: 13 },
-  { event_name: "Goes home with dice", points: -0.5, description: null, is_variable: false, sort_order: 14 },
-  { event_name: "Mini reward victory", points: 0.5, description: "For participants.", is_variable: false, sort_order: 15 },
-  { event_name: "Making fire at final 4", points: 2, description: "CA bonus rule.", is_variable: false, sort_order: 16 },
-  { event_name: "Sitting out challenge for food", points: 0.5, description: "CA bonus rule.", is_variable: false, sort_order: 17 },
-  { event_name: "Stole idol and voted them out", points: 3, description: "CA bonus: Convinced another to give you their idol then voted them out.", is_variable: false, sort_order: 18 },
+  { event_name: "Has episode title or hashtag", points: 0.25, description: "Must be about a specific person/subset, not a whole tribe.", is_variable: false, sort_order: 10 },
+  { event_name: "Goes home with dice", points: -0.5, description: null, is_variable: false, sort_order: 11 },
+  { event_name: "Mini reward victory", points: 0.5, description: "For participants.", is_variable: false, sort_order: 12 },
+  { event_name: "Made final group", points: 2, description: "Final three in modern Survivor.", is_variable: false, sort_order: 13 },
+  { event_name: "Vote in final group", points: 0.5, description: "Per vote cast on you.", is_variable: true, sort_order: 14 },
+  { event_name: "Won Survivor", points: 7.5, description: "Assume all unshown votes go to winner. Gets final group points too.", is_variable: false, sort_order: 15 },
 ];
 
 // Generate a random 4-digit league code
