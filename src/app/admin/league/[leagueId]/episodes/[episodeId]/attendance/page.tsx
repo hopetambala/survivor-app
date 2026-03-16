@@ -63,7 +63,7 @@ export default function AttendancePage() {
   }
 
   if (!episode) {
-    return <main className="page page--centered"><p>Loading...</p></main>;
+    return <main className="page page--centered"><dl-spinner></dl-spinner></main>;
   }
 
   return (
