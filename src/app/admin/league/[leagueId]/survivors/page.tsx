@@ -129,8 +129,7 @@ export default function ManageSurvivors() {
             <dl-cluster justify="between" gap="200">
               <div className="cl-dlite-flex-1">
                 <span
-                  className={s.status === "eliminated" ? "cl-dlite-sem-text-tertiary cl-dlite-line-through" : ""}
-                  style={s.status !== "eliminated" ? { fontWeight: 500 } : undefined}
+                  className={`cl-dlite-sem-font-heading ${s.status === "eliminated" ? "cl-dlite-sem-text-tertiary cl-dlite-line-through" : "cl-dlite-prim-font-medium"}`}
                 >
                   {s.name}
                 </span>

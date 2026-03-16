@@ -82,7 +82,7 @@ export default function ScoringRulesPage() {
           <div key={rule.id} className="cl-dlite-card cl-dlite-sem-p-300">
             <dl-cluster justify="between" gap="300">
               <div className="cl-dlite-flex-1">
-                <div className="cl-dlite-prim-font-medium cl-dlite-sem-text-300">{rule.event_name}</div>
+                <div className="cl-dlite-sem-font-heading cl-dlite-prim-font-medium cl-dlite-sem-text-300">{rule.event_name}</div>
                 {rule.description && <div className="cl-dlite-sem-text-200 cl-dlite-sem-text-tertiary">{rule.description}</div>}
               </div>
               <div className="cl-dlite-flex cl-dlite-items-center cl-dlite-sem-gap-200">
@@ -104,7 +104,7 @@ export default function ScoringRulesPage() {
 
       <form onSubmit={handleAdd} className="cl-dlite-card cl-dlite-sem-p-400 cl-dlite-sem-bg-sunken cl-dlite-sem-mt-600">
         <dl-stack gap="300">
-          <span className="cl-dlite-prim-font-semibold cl-dlite-sem-text-300">Add Custom Rule</span>
+          <span className="cl-dlite-sem-font-heading cl-dlite-prim-font-semibold cl-dlite-sem-text-300">Add Custom Rule</span>
           <dl-input
             placeholder="Event name"
             value={name}

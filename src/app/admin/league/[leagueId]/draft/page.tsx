@@ -181,7 +181,7 @@ export default function DraftPage() {
 
       {draftState?.status === "completed" && (
         <div className="cl-dlite-card cl-dlite-sem-p-400 cl-dlite-sem-mt-600 cl-dlite-sem-mb-600 status-card--success">
-          <p className="cl-dlite-prim-font-semibold cl-dlite-sem-text-success">Draft Complete! 🎉</p>
+          <p className="cl-dlite-sem-font-heading cl-dlite-prim-font-semibold cl-dlite-sem-text-success">Draft Complete! 🎉</p>
           <dl-text size="300" color="secondary">{totalPicksMade} picks made.</dl-text>
           <div className="cl-dlite-sem-mt-200">
             <button onClick={resetDraft} className="btn-link cl-dlite-sem-text-200 cl-dlite-sem-text-danger">
@@ -196,7 +196,7 @@ export default function DraftPage() {
           <dl-text size="300" color="secondary">
             Round {draftState.current_round} &middot; Pick {totalPicksMade + 1} of {totalPicksNeeded}
           </dl-text>
-          <p className="cl-dlite-sem-text-400 cl-dlite-prim-font-bold cl-dlite-sem-mt-100">
+          <p className="cl-dlite-sem-font-heading cl-dlite-sem-text-400 cl-dlite-prim-font-bold cl-dlite-sem-mt-100">
             {currentPlayer?.name}&apos;s turn to pick
           </p>
           <div className="cl-dlite-flex cl-dlite-sem-gap-200 cl-dlite-sem-mt-300">
@@ -214,7 +214,7 @@ export default function DraftPage() {
       <div className="flex-col-lg-row cl-dlite-sem-gap-600">
         {/* Draft Board */}
         <div className="cl-dlite-flex-1 cl-dlite-min-w-0">
-          <span className="cl-dlite-prim-font-semibold cl-dlite-sem-mb-200 cl-dlite-block">Draft Board</span>
+          <span className="cl-dlite-sem-font-heading cl-dlite-prim-font-semibold cl-dlite-sem-mb-200 cl-dlite-block">Draft Board</span>
           <div className="cl-dlite-overflow-x-auto">
             <table className="cl-dlite-table">
               <thead>
@@ -231,7 +231,7 @@ export default function DraftPage() {
                   const isCurrentPick = currentPlayerId === player.id && draftState?.status === "in_progress";
                   return (
                     <tr key={player.id} className={isCurrentPick ? "row-highlight" : ""}>
-                      <td className="cl-dlite-prim-font-medium cl-dlite-whitespace-nowrap">
+                      <td className="cl-dlite-sem-font-heading cl-dlite-prim-font-medium cl-dlite-whitespace-nowrap">
                         {player.name}
                         {isCurrentPick && <span className="cl-dlite-sem-ml-100">👈</span>}
                       </td>
@@ -251,7 +251,7 @@ export default function DraftPage() {
         {/* Available Survivors */}
         {draftState?.status === "in_progress" && !isDraftDone && (
           <div className="lg-w-72">
-            <span className="cl-dlite-prim-font-semibold cl-dlite-sem-mb-200 cl-dlite-block">Available Survivors</span>
+            <span className="cl-dlite-sem-font-heading cl-dlite-prim-font-semibold cl-dlite-sem-mb-200 cl-dlite-block">Available Survivors</span>
             <div className="cl-dlite-flex cl-dlite-flex-col cl-dlite-sem-gap-200 lg-max-h-70vh">
               {survivors.map((s) => {
                 const count = draftCountFor(s.id);
@@ -274,7 +274,7 @@ export default function DraftPage() {
                     disabled={!available}
                     className={`cl-dlite-card cl-dlite-text-left cl-dlite-sem-text-300 cl-dlite-sem-transition-colors ${statusClass}`}
                   >
-                    <div className="cl-dlite-prim-font-medium">{s.name}</div>
+                    <div className="cl-dlite-sem-font-heading cl-dlite-prim-font-medium">{s.name}</div>
                     <div className="cl-dlite-sem-text-200 cl-dlite-sem-text-tertiary">
                       {s.tribe && `${s.tribe} · `}
                       {count}/{maxDrafts} drafted

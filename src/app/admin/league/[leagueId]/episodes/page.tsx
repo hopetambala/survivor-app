@@ -66,7 +66,7 @@ export default function ManageEpisodes() {
           <div key={ep.id} className="cl-dlite-card cl-dlite-sem-p-300">
             <dl-cluster justify="between" gap="200">
               <div>
-                <span className="cl-dlite-prim-font-semibold">Episode {ep.episode_number}</span>
+                <span className="cl-dlite-sem-font-heading cl-dlite-prim-font-semibold">Episode {ep.episode_number}</span>
                 {ep.title && <span className="cl-dlite-sem-text-secondary cl-dlite-sem-ml-200">{ep.title}</span>}
                 {ep.is_scored && <dl-badge variant="success">scored</dl-badge>}
               </div>

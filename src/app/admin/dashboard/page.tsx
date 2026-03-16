@@ -129,10 +129,10 @@ export default function AdminDashboard() {
               className="cl-dlite-card cl-dlite-text-left cl-dlite-cursor-pointer cl-dlite-sem-transition-colors"
               style={{ display: "block", width: "100%" }}
             >
-              <div className="cl-dlite-sem-text-400" style={{ fontWeight: 600 }}>{league.name}</div>
+              <div className="cl-dlite-sem-font-heading cl-dlite-sem-text-400 cl-dlite-prim-font-semibold">{league.name}</div>
               <dl-text size="300" color="secondary">{league.season_name}</dl-text>
               <dl-text size="200" color="tertiary">
-                Code: <span className="cl-dlite-sem-font-mono" style={{ fontWeight: 700 }}>{league.code}</span>
+                Code: <span className="cl-dlite-sem-font-mono cl-dlite-prim-font-bold">{league.code}</span>
               </dl-text>
             </button>
           ))}

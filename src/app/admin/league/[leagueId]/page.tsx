@@ -65,7 +65,7 @@ export default function LeagueOverview() {
         <dl-heading level={1}>{league.name}</dl-heading>
         <dl-text color="secondary">{league.season_name}</dl-text>
         <dl-text size="300">
-          League Code: <span className="cl-dlite-sem-font-mono" style={{ fontWeight: 700, fontSize: "1.125rem" }}>{league.code}</span>
+          League Code: <span className="cl-dlite-sem-font-mono cl-dlite-prim-font-bold cl-dlite-sem-text-500">{league.code}</span>
           <span className="cl-dlite-sem-text-tertiary cl-dlite-sem-ml-200">(share with participants)</span>
         </dl-text>
       </div>
@@ -79,7 +79,7 @@ export default function LeagueOverview() {
             style={{ display: "block", width: "100%" }}
           >
             <dl-cluster justify="between" gap="200">
-              <span style={{ fontWeight: 600 }}>{item.label}</span>
+              <span className="cl-dlite-sem-font-heading cl-dlite-prim-font-semibold">{item.label}</span>
               {item.count !== undefined && (
                 <dl-badge>{item.count}</dl-badge>
               )}

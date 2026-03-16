@@ -104,7 +104,7 @@ export default function AttendancePage() {
                 className="cl-dlite-card cl-dlite-flex cl-dlite-items-center cl-dlite-justify-between cl-dlite-cursor-pointer cl-dlite-sem-transition-colors"
                 style={{ display: "flex" }}
               >
-                <span className="cl-dlite-prim-font-medium">{player.name}</span>
+                <span className="cl-dlite-sem-font-heading cl-dlite-prim-font-medium">{player.name}</span>
                 <span className={`cl-dlite-sem-font-mono cl-dlite-prim-font-bold cl-dlite-sem-text-400 ${
                   pts === 1 ? "cl-dlite-sem-text-success" : pts === 0.5 ? "cl-dlite-sem-text-warning" : "cl-dlite-sem-text-muted"
                 }`}>

@@ -186,7 +186,7 @@ export default function ScoreEpisode() {
               </tr>
             ))}
             {/* Totals row */}
-            <tr className="cl-dlite-prim-font-semibold">
+            <tr className="cl-dlite-sem-font-heading cl-dlite-prim-font-semibold">
               <td className="sticky-col cl-dlite-sem-bg-sunken">Total</td>
               <td className="cl-dlite-sem-bg-sunken"></td>
               {survivors.map((s) => {

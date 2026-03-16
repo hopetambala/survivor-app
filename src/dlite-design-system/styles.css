@@ -8,6 +8,14 @@
  */
 
 /* ===== PAGE LAYOUTS ===== */
+
+/* Tables should use the heading (sans-serif) font for UI readability */
+.cl-dlite-table,
+.cl-dlite-table th,
+.cl-dlite-table td {
+  font-family: var(--tk-dlite-semantic-typography-font-heading), Arial, Helvetica, sans-serif;
+}
+
 .page {
   min-height: 100vh;
   padding: var(--tk-dlite-semantic-spacing-400);

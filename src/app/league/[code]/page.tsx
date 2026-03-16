@@ -156,15 +156,15 @@ function LeaderboardView({ playerScores }: { playerScores: ReturnType<typeof cal
             }`}
           >
             <div className="cl-dlite-flex cl-dlite-items-center cl-dlite-sem-gap-300">
-              <span className="cl-dlite-sem-text-400 cl-dlite-prim-font-bold cl-dlite-sem-text-tertiary" style={{ width: "2rem" }}>{idx + 1}</span>
+              <span className="cl-dlite-sem-font-heading cl-dlite-sem-text-400 cl-dlite-prim-font-bold cl-dlite-sem-text-tertiary" style={{ width: "2rem" }}>{idx + 1}</span>
               <div>
-                <div className="cl-dlite-prim-font-semibold">{ps.playerName}</div>
+                <div className="cl-dlite-sem-font-heading cl-dlite-prim-font-semibold">{ps.playerName}</div>
                 <div className="cl-dlite-sem-text-200 cl-dlite-sem-text-tertiary">
                   Survivor: {ps.survivorScore} &middot; Attendance: {ps.attendanceScore}
                 </div>
               </div>
             </div>
-            <span className="cl-dlite-sem-text-500 cl-dlite-prim-font-bold">{ps.totalScore}</span>
+            <span className="cl-dlite-sem-font-heading cl-dlite-sem-text-500 cl-dlite-prim-font-bold">{ps.totalScore}</span>
           </div>
         ))}
         {playerScores.length === 0 && <dl-text color="secondary">No scores yet.</dl-text>}
@@ -196,7 +196,7 @@ function RostersView({
 
           return (
             <div key={player.id} className="cl-dlite-card cl-dlite-sem-p-400">
-              <span className="cl-dlite-prim-font-semibold cl-dlite-sem-mb-200 cl-dlite-block">{player.name}</span>
+              <span className="cl-dlite-sem-font-heading cl-dlite-prim-font-semibold cl-dlite-sem-mb-200 cl-dlite-block">{player.name}</span>
               {picks.length === 0 ? (
                 <dl-text size="300" color="tertiary">No picks yet</dl-text>
               ) : (
@@ -264,7 +264,7 @@ function EpisodesView({
           <tbody>
             {playerScores.map((ps) => (
               <tr key={ps.playerId}>
-                <td className="cl-dlite-prim-font-medium cl-dlite-whitespace-nowrap">{ps.playerName}</td>
+                <td className="cl-dlite-sem-font-heading cl-dlite-prim-font-medium cl-dlite-whitespace-nowrap">{ps.playerName}</td>
                 {episodes.map((ep) => {
                   const epScore = ps.episodeScores.find((es) => es.episode === ep.episode_number);
                   return (
@@ -288,7 +288,7 @@ function EpisodesView({
               onClick={() => setExpandedEp(expandedEp === ep.id ? null : ep.id)}
               className="cl-dlite-w-full cl-dlite-sem-p-300 cl-dlite-flex cl-dlite-items-center cl-dlite-justify-between cl-dlite-cursor-pointer cl-dlite-sem-transition-colors"
             >
-              <span className="cl-dlite-prim-font-semibold">
+              <span className="cl-dlite-sem-font-heading cl-dlite-prim-font-semibold">
                 Episode {ep.episode_number}
                 {ep.title && <span className="cl-dlite-sem-text-secondary cl-dlite-prim-font-normal cl-dlite-sem-ml-200">{ep.title}</span>}
               </span>
@@ -351,7 +351,7 @@ function EpisodeDetail({
 
             return (
               <tr key={s.id}>
-                <td className="cl-dlite-prim-font-medium cl-dlite-whitespace-nowrap">{s.name}</td>
+                <td className="cl-dlite-sem-font-heading cl-dlite-prim-font-medium cl-dlite-whitespace-nowrap">{s.name}</td>
                 {rules.map((r) => {
                   const ev = survivorEvents.find((e) => e.scoring_rule_id === r.id);
                   return (
@@ -378,11 +378,11 @@ function SurvivorsView({ survivors }: { survivors: Survivor[] }) {
     <div>
       <dl-heading level={2}>Survivors</dl-heading>
 
-      <span className="cl-dlite-prim-font-medium cl-dlite-sem-text-success cl-dlite-sem-mb-200 cl-dlite-block">Still In ({active.length})</span>
+      <span className="cl-dlite-sem-font-heading cl-dlite-prim-font-medium cl-dlite-sem-text-success cl-dlite-sem-mb-200 cl-dlite-block">Still In ({active.length})</span>
       <div className="grid-responsive cl-dlite-sem-mb-600">
         {active.map((s) => (
           <div key={s.id} className="cl-dlite-card cl-dlite-sem-p-200 cl-dlite-sem-text-300">
-            <div className="cl-dlite-prim-font-medium">{s.name}</div>
+            <div className="cl-dlite-sem-font-heading cl-dlite-prim-font-medium">{s.name}</div>
             {s.tribe && <div className="cl-dlite-sem-text-200 cl-dlite-sem-text-tertiary">{s.tribe}</div>}
           </div>
         ))}
@@ -390,11 +390,11 @@ function SurvivorsView({ survivors }: { survivors: Survivor[] }) {
 
       {eliminated.length > 0 && (
         <>
-          <span className="cl-dlite-prim-font-medium cl-dlite-sem-text-danger cl-dlite-sem-mb-200 cl-dlite-block">Eliminated ({eliminated.length})</span>
+          <span className="cl-dlite-sem-font-heading cl-dlite-prim-font-medium cl-dlite-sem-text-danger cl-dlite-sem-mb-200 cl-dlite-block">Eliminated ({eliminated.length})</span>
           <div className="grid-responsive">
             {eliminated.map((s) => (
               <div key={s.id} className="cl-dlite-card cl-dlite-sem-p-200 cl-dlite-sem-text-300 cl-dlite-sem-bg-sunken" style={{ opacity: 0.6 }}>
-                <div className="cl-dlite-prim-font-medium cl-dlite-line-through">{s.name}</div>
+                <div className="cl-dlite-sem-font-heading cl-dlite-prim-font-medium cl-dlite-line-through">{s.name}</div>
                 {s.tribe && <div className="cl-dlite-sem-text-200 cl-dlite-sem-text-tertiary">{s.tribe}</div>}
                 {s.eliminated_episode && <div className="cl-dlite-sem-text-200 cl-dlite-sem-text-danger">Ep {s.eliminated_episode}</div>}
               </div>

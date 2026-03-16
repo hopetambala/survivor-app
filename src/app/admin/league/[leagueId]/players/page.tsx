@@ -128,7 +128,7 @@ export default function ManagePlayers() {
             <dl-cluster justify="between" gap="200">
               <dl-cluster gap="300">
                 <span className="cl-dlite-sem-font-mono cl-dlite-sem-text-300 cl-dlite-sem-text-tertiary" style={{ width: "1.5rem" }}>{idx + 1}.</span>
-                <span style={{ fontWeight: 500 }}>{p.name}</span>
+                <span className="cl-dlite-sem-font-heading cl-dlite-prim-font-medium">{p.name}</span>
               </dl-cluster>
               <dl-cluster gap="100">
                 <dl-icon-button

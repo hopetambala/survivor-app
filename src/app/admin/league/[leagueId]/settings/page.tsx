@@ -82,10 +82,10 @@ export default function LeagueSettings() {
 
       {/* Current roster info */}
       <div className="cl-dlite-card cl-dlite-sem-p-400 cl-dlite-sem-bg-sunken cl-dlite-sem-mt-600 cl-dlite-sem-mb-600">
-        <span className="cl-dlite-prim-font-semibold">Current Roster</span>
+        <span className="cl-dlite-sem-font-heading cl-dlite-prim-font-semibold">Current Roster</span>
         <div className="grid-2 cl-dlite-sem-mt-200 cl-dlite-sem-text-300">
-          <div>Players: <span className="cl-dlite-prim-font-medium">{playerCount}</span></div>
-          <div>Survivors: <span className="cl-dlite-prim-font-medium">{survivorCount}</span></div>
+          <div>Players: <span className="cl-dlite-sem-font-heading cl-dlite-prim-font-medium">{playerCount}</span></div>
+          <div>Survivors: <span className="cl-dlite-sem-font-heading cl-dlite-prim-font-medium">{survivorCount}</span></div>
         </div>
       </div>
 
@@ -93,7 +93,7 @@ export default function LeagueSettings() {
         <dl-stack gap="600">
           {/* Picks per player */}
           <div>
-            <label className="cl-dlite-block cl-dlite-prim-font-medium cl-dlite-sem-mb-100">Picks per Player</label>
+            <label className="cl-dlite-block cl-dlite-sem-font-heading cl-dlite-prim-font-medium cl-dlite-sem-mb-100">Picks per Player</label>
             <dl-text size="300" color="secondary">How many survivors each player drafts (their team size).</dl-text>
             <div className="cl-dlite-sem-mt-200">
               <input
@@ -110,7 +110,7 @@ export default function LeagueSettings() {
 
           {/* Max times drafted */}
           <div>
-            <label className="cl-dlite-block cl-dlite-prim-font-medium cl-dlite-sem-mb-100">Max Times a Survivor Can Be Drafted</label>
+            <label className="cl-dlite-block cl-dlite-sem-font-heading cl-dlite-prim-font-medium cl-dlite-sem-mb-100">Max Times a Survivor Can Be Drafted</label>
             <dl-text size="300" color="secondary">
               How many different players can pick the same survivor. Needs to be high enough so every player can fill their team.
             </dl-text>
@@ -129,10 +129,10 @@ export default function LeagueSettings() {
 
           {/* Recommendation / validation */}
           <div className={`cl-dlite-card cl-dlite-sem-p-400 ${isEnoughSlots ? "status-card--success" : "status-card--danger"}`}>
-            <span className="cl-dlite-prim-font-semibold">{isEnoughSlots ? "Looks good" : "Not enough survivor slots"}</span>
+            <span className="cl-dlite-sem-font-heading cl-dlite-prim-font-semibold">{isEnoughSlots ? "Looks good" : "Not enough survivor slots"}</span>
             <div className="cl-dlite-sem-text-300">
-              <p>Total picks needed: <span className="cl-dlite-prim-font-medium">{playerCount} players × {numPicksPerPlayer} picks = {totalPicksNeeded}</span></p>
-              <p>Available survivor slots: <span className="cl-dlite-prim-font-medium">{survivorCount} survivors × {maxTimesDrafted} max drafts = {totalSurvivorSlots}</span></p>
+              <p>Total picks needed: <span className="cl-dlite-sem-font-heading cl-dlite-prim-font-medium">{playerCount} players × {numPicksPerPlayer} picks = {totalPicksNeeded}</span></p>
+              <p>Available survivor slots: <span className="cl-dlite-sem-font-heading cl-dlite-prim-font-medium">{survivorCount} survivors × {maxTimesDrafted} max drafts = {totalSurvivorSlots}</span></p>
               {!isEnoughSlots && survivorCount > 0 && (
                 <div className="cl-dlite-sem-mt-200">
                   <button
