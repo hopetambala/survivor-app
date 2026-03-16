@@ -253,32 +253,32 @@ function EpisodesView({
       <div className="cl-dlite-overflow-x-auto cl-dlite-sem-mb-600">
         <dl-table>
           <table>
-          <thead>
-            <tr>
-              <th className="cl-dlite-text-left">Player</th>
-              {episodes.map((ep) => (
-                <th key={ep.id} className="cl-dlite-text-center">Ep {ep.episode_number}</th>
-              ))}
-              <th className="cl-dlite-text-center cl-dlite-prim-font-bold">Total</th>
-            </tr>
-          </thead>
-          <tbody>
-            {playerScores.map((ps) => (
-              <tr key={ps.playerId}>
-                <td className="cl-dlite-sem-font-heading cl-dlite-prim-font-medium cl-dlite-whitespace-nowrap">{ps.playerName}</td>
-                {episodes.map((ep) => {
-                  const epScore = ps.episodeScores.find((es) => es.episode === ep.episode_number);
-                  return (
-                    <td key={ep.id} className="cl-dlite-text-center">
-                      {epScore?.total ?? "—"}
-                    </td>
-                  );
-                })}
-                <td className="cl-dlite-text-center cl-dlite-prim-font-bold">{ps.totalScore}</td>
+            <thead>
+              <tr>
+                <th className="cl-dlite-text-left">Player</th>
+                {episodes.map((ep) => (
+                  <th key={ep.id} className="cl-dlite-text-center">Ep {ep.episode_number}</th>
+                ))}
+                <th className="cl-dlite-text-center cl-dlite-prim-font-bold">Total</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {playerScores.map((ps) => (
+                <tr key={ps.playerId}>
+                  <td className="cl-dlite-sem-font-heading cl-dlite-prim-font-medium cl-dlite-whitespace-nowrap">{ps.playerName}</td>
+                  {episodes.map((ep) => {
+                    const epScore = ps.episodeScores.find((es) => es.episode === ep.episode_number);
+                    return (
+                      <td key={ep.id} className="cl-dlite-text-center">
+                        {epScore?.total ?? "—"}
+                      </td>
+                    );
+                  })}
+                  <td className="cl-dlite-text-center cl-dlite-prim-font-bold">{ps.totalScore}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </dl-table>
       </div>
 
@@ -332,43 +332,43 @@ function EpisodeDetail({
     <div className="cl-dlite-sem-p-300 cl-dlite-overflow-x-auto" style={{ paddingTop: 0 }}>
       <dl-table>
         <table>
-        <thead>
-          <tr>
-            <th className="cl-dlite-text-left">Survivor</th>
-            {rules.map((r) => (
-              <th key={r.id} className="cl-dlite-text-center" title={r.description || ""}>
-                {r.event_name.substring(0, 15)}
-              </th>
-            ))}
-            <th className="cl-dlite-text-center cl-dlite-prim-font-bold">Total</th>
-          </tr>
-        </thead>
-        <tbody>
-          {survivorsWithEvents.map((s) => {
-            const survivorEvents = events.filter((e) => e.survivor_id === s.id);
-            const total = survivorEvents.reduce((sum, ev) => {
-              const rule = rulesMap.get(ev.scoring_rule_id);
-              if (!rule) return sum;
-              return sum + (rule.is_variable ? ev.value : rule.points * ev.value);
-            }, 0);
+          <thead>
+            <tr>
+              <th className="cl-dlite-text-left">Survivor</th>
+              {rules.map((r) => (
+                <th key={r.id} className="cl-dlite-text-center" title={r.description || ""}>
+                  {r.event_name.substring(0, 15)}
+                </th>
+              ))}
+              <th className="cl-dlite-text-center cl-dlite-prim-font-bold">Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            {survivorsWithEvents.map((s) => {
+              const survivorEvents = events.filter((e) => e.survivor_id === s.id);
+              const total = survivorEvents.reduce((sum, ev) => {
+                const rule = rulesMap.get(ev.scoring_rule_id);
+                if (!rule) return sum;
+                return sum + (rule.is_variable ? ev.value : rule.points * ev.value);
+              }, 0);
 
-            return (
-              <tr key={s.id}>
-                <td className="cl-dlite-sem-font-heading cl-dlite-prim-font-medium cl-dlite-whitespace-nowrap">{s.name}</td>
-                {rules.map((r) => {
-                  const ev = survivorEvents.find((e) => e.scoring_rule_id === r.id);
-                  return (
-                    <td key={r.id} className="cl-dlite-text-center">
-                      {ev && ev.value !== 0 ? ev.value : "—"}
-                    </td>
-                  );
-                })}
-                <td className="cl-dlite-text-center cl-dlite-prim-font-bold">{total}</td>
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
+              return (
+                <tr key={s.id}>
+                  <td className="cl-dlite-sem-font-heading cl-dlite-prim-font-medium cl-dlite-whitespace-nowrap">{s.name}</td>
+                  {rules.map((r) => {
+                    const ev = survivorEvents.find((e) => e.scoring_rule_id === r.id);
+                    return (
+                      <td key={r.id} className="cl-dlite-text-center">
+                        {ev && ev.value !== 0 ? ev.value : "—"}
+                      </td>
+                    );
+                  })}
+                  <td className="cl-dlite-text-center cl-dlite-prim-font-bold">{total}</td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
       </dl-table>
     </div>
   );

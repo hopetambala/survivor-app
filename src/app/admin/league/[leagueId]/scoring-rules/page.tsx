@@ -89,6 +89,7 @@ export default function ScoringRulesPage() {
               <div className="cl-dlite-flex cl-dlite-items-center cl-dlite-sem-gap-200">
                 <dl-input
                   type="number"
+                  step="0.25"
                   value={String(rule.points)}
                   onBlur={(e: any) => handleUpdate(rule, "points", parseFloat(getEventValue(e)) || 0)}
                   style={{ width: "4rem" }}
@@ -113,6 +114,7 @@ export default function ScoringRulesPage() {
           <dl-cluster gap="200">
             <dl-input
               type="number"
+              step="0.25"
               value={points}
               onInput={(e: any) => setPoints(getEventValue(e))}
               placeholder="Points"

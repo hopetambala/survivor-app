@@ -217,35 +217,35 @@ export default function DraftPage() {
           <span className="cl-dlite-sem-font-heading cl-dlite-prim-font-semibold cl-dlite-sem-mb-200 cl-dlite-block">Draft Board</span>
           <div className="cl-dlite-overflow-x-auto">
             <dl-table>
-            <table>
-              <thead>
-                <tr>
-                  <th className="cl-dlite-text-left">Player</th>
-                  {Array.from({ length: numPicks }, (_, i) => (
-                    <th key={i} className="cl-dlite-text-center">Pick {i + 1}</th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {players.map((player) => {
-                  const picks = picksForPlayer(player.id);
-                  const isCurrentPick = currentPlayerId === player.id && draftState?.status === "in_progress";
-                  return (
-                    <tr key={player.id} className={isCurrentPick ? "row-highlight" : ""}>
-                      <td className="cl-dlite-sem-font-heading cl-dlite-prim-font-medium cl-dlite-whitespace-nowrap">
-                        {player.name}
-                        {isCurrentPick && <span className="cl-dlite-sem-ml-100">👈</span>}
-                      </td>
-                      {Array.from({ length: numPicks }, (_, i) => (
-                        <td key={i} className="cl-dlite-text-center cl-dlite-sem-text-200">
-                          {picks[i] || "—"}
+              <table>
+                <thead>
+                  <tr>
+                    <th className="cl-dlite-text-left">Player</th>
+                    {Array.from({ length: numPicks }, (_, i) => (
+                      <th key={i} className="cl-dlite-text-center">Pick {i + 1}</th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {players.map((player) => {
+                    const picks = picksForPlayer(player.id);
+                    const isCurrentPick = currentPlayerId === player.id && draftState?.status === "in_progress";
+                    return (
+                      <tr key={player.id} className={isCurrentPick ? "row-highlight" : ""}>
+                        <td className="cl-dlite-sem-font-heading cl-dlite-prim-font-medium cl-dlite-whitespace-nowrap">
+                          {player.name}
+                          {isCurrentPick && <span className="cl-dlite-sem-ml-100">👈</span>}
                         </td>
-                      ))}
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
+                        {Array.from({ length: numPicks }, (_, i) => (
+                          <td key={i} className="cl-dlite-text-center cl-dlite-sem-text-200">
+                            {picks[i] || "—"}
+                          </td>
+                        ))}
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
             </dl-table>
           </div>
         </div>

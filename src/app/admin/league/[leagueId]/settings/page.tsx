@@ -99,6 +99,8 @@ export default function LeagueSettings() {
             <div className="cl-dlite-sem-mt-200">
               <dl-input
                 type="number"
+                min="1"
+                max="20"
                 value={String(numPicksPerPlayer)}
                 onInput={(e: any) => setNumPicksPerPlayer(Number(getEventValue(e)))}
                 style={{ width: "6rem" }}
@@ -115,6 +117,8 @@ export default function LeagueSettings() {
             <div className="cl-dlite-sem-mt-200">
               <dl-input
                 type="number"
+                min="1"
+                max="50"
                 value={String(maxTimesDrafted)}
                 onInput={(e: any) => setMaxTimesDrafted(Number(getEventValue(e)))}
                 style={{ width: "6rem" }}
