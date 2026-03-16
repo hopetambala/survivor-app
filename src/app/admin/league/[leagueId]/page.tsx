@@ -43,7 +43,7 @@ export default function LeagueOverview() {
   }
 
   if (!league) {
-    return <main className="min-h-screen flex items-center justify-center"><p>Loading...</p></main>;
+    return <main className="page page--centered"><p>Loading...</p></main>;
   }
 
   const navItems = [
@@ -56,44 +56,44 @@ export default function LeagueOverview() {
   ];
 
   return (
-    <main className="min-h-screen p-4 max-w-2xl mx-auto">
-      <button onClick={() => router.push("/admin/dashboard")} className="text-sm text-gray-500 hover:text-gray-800 mb-4 inline-block">
+    <main className="page page--narrow">
+      <dl-button variant="ghost" size="sm" onClick={() => router.push("/admin/dashboard")}>
         &larr; All Leagues
-      </button>
+      </dl-button>
 
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold">{league.name}</h1>
-        <p className="text-gray-500">{league.season_name}</p>
-        <p className="text-sm mt-1">
-          League Code: <span className="font-mono font-bold text-lg">{league.code}</span>
-          <span className="text-gray-400 ml-2">(share with participants)</span>
-        </p>
+      <div className="cl-dlite-sem-mb-600">
+        <dl-heading level={1}>{league.name}</dl-heading>
+        <dl-text color="secondary">{league.season_name}</dl-text>
+        <dl-text size="300">
+          League Code: <span className="cl-dlite-sem-font-mono cl-dlite-prim-font-bold cl-dlite-sem-text-500">{league.code}</span>
+          <span className="cl-dlite-sem-text-tertiary cl-dlite-sem-ml-200">(share with participants)</span>
+        </dl-text>
       </div>
 
-      <div className="grid gap-3 sm:grid-cols-2">
+      <div className="grid-2">
         {navItems.map((item) => (
-          <button
+          <dl-card
             key={item.label}
+            interactive
             onClick={() => router.push(item.href)}
-            className="border rounded-lg p-4 text-left hover:bg-gray-50 transition-colors"
           >
-            <div className="font-semibold flex items-center justify-between">
-              {item.label}
+            <dl-cluster justify="between" gap="200">
+              <span className="cl-dlite-sem-font-heading cl-dlite-prim-font-semibold">{item.label}</span>
               {item.count !== undefined && (
-                <span className="text-sm bg-gray-100 px-2 py-0.5 rounded-full">{item.count}</span>
+                <dl-badge>{item.count}</dl-badge>
               )}
               {item.status && (
-                <span className={`text-xs px-2 py-0.5 rounded-full ${
-                  item.status === "completed" ? "bg-green-100 text-green-800" :
-                  item.status === "in_progress" ? "bg-yellow-100 text-yellow-800" :
-                  "bg-gray-100 text-gray-600"
-                }`}>
+                <dl-badge variant={
+                  item.status === "completed" ? "success" :
+                  item.status === "in_progress" ? "warning" :
+                  "default"
+                }>
                   {item.status.replace("_", " ")}
-                </span>
+                </dl-badge>
               )}
-            </div>
-            <p className="text-sm text-gray-500 mt-1">{item.desc}</p>
-          </button>
+            </dl-cluster>
+            <dl-text size="300" color="secondary">{item.desc}</dl-text>
+          </dl-card>
         ))}
       </div>
     </main>
