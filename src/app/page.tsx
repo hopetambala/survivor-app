@@ -29,7 +29,7 @@ export default function Home() {
           value={code}
           style={{ textAlign: "center", fontSize: "1.5rem", letterSpacing: "0.1em" }}
           onInput={(e: any) => {
-            const val = (e.detail?.value ?? "").replace(/\D/g, "");
+            const val = (e.detail?.value ?? e.target?.value ?? "").replace(/\D/g, "");
             setCode(val.slice(0, 4));
           }}
         />

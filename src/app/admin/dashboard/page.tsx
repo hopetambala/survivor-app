@@ -104,13 +104,13 @@ export default function AdminDashboard() {
                 placeholder="League name (e.g. Fantasy Survivor)"
                 value={name}
                 required
-                onInput={(e: any) => setName(e.detail?.value ?? "")}
+                onInput={(e: any) => setName(e.detail?.value ?? e.target?.value ?? "")}
               />
               <dl-input
                 placeholder="Season name (e.g. Season 50 CA)"
                 value={seasonName}
                 required
-                onInput={(e: any) => setSeasonName(e.detail?.value ?? "")}
+                onInput={(e: any) => setSeasonName(e.detail?.value ?? e.target?.value ?? "")}
               />
               <dl-button variant="primary" onClick={handleCreate}>Create League</dl-button>
             </dl-stack>

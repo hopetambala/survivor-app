@@ -91,7 +91,7 @@ export default function ManageSurvivors() {
               placeholder="One name per line"
               rows={6}
               value={bulkNames}
-              onInput={(e: any) => setBulkNames(e.detail?.value ?? "")}
+              onInput={(e: any) => setBulkNames(e.detail?.value ?? e.target?.value ?? "")}
             />
             <dl-button variant="primary" onClick={handleBulkAdd}>Add All</dl-button>
           </dl-stack>
@@ -104,14 +104,14 @@ export default function ManageSurvivors() {
                 placeholder="Survivor name"
                 value={name}
                 required
-                onInput={(e: any) => setName(e.detail?.value ?? "")}
+                onInput={(e: any) => setName(e.detail?.value ?? e.target?.value ?? "")}
               />
             </div>
             <div style={{ width: "7rem" }}>
               <dl-input
                 placeholder="Tribe"
                 value={tribe}
-                onInput={(e: any) => setTribe(e.detail?.value ?? "")}
+                onInput={(e: any) => setTribe(e.detail?.value ?? e.target?.value ?? "")}
               />
             </div>
             <dl-button variant="primary" onClick={handleAdd}>Add</dl-button>
@@ -138,7 +138,7 @@ export default function ManageSurvivors() {
                   placeholder="tribe"
                   value={s.tribe || ""}
                   style={{ width: "5rem", fontSize: "0.75rem" }}
-                  onChange={(e: any) => handleTribeUpdate(s.id, e.detail?.value ?? "")}
+                  onChange={(e: any) => handleTribeUpdate(s.id, e.detail?.value ?? e.target?.value ?? "")}
                 />
                 <dl-badge variant={s.status === "active" ? "success" : "danger"}>
                   {s.status}

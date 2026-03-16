@@ -109,7 +109,7 @@ export default function ScoringRulesPage() {
             placeholder="Event name"
             value={name}
             required
-            onInput={(e: any) => setName(e.detail?.value ?? "")}
+            onInput={(e: any) => setName(e.detail?.value ?? e.target?.value ?? "")}
           />
           <dl-cluster gap="200">
             <input
@@ -130,7 +130,7 @@ export default function ScoringRulesPage() {
           <dl-input
             placeholder="Description (optional)"
             value={description}
-            onInput={(e: any) => setDescription(e.detail?.value ?? "")}
+            onInput={(e: any) => setDescription(e.detail?.value ?? e.target?.value ?? "")}
           />
           <dl-button variant="primary" onClick={handleAdd}>Add Rule</dl-button>
         </dl-stack>

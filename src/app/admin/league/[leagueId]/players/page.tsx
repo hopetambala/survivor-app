@@ -97,7 +97,7 @@ export default function ManagePlayers() {
               placeholder="One name per line"
               rows={6}
               value={bulkNames}
-              onInput={(e: any) => setBulkNames(e.detail?.value ?? "")}
+              onInput={(e: any) => setBulkNames(e.detail?.value ?? e.target?.value ?? "")}
             />
             <dl-button variant="primary" onClick={handleBulkAdd}>Add All</dl-button>
           </dl-stack>
@@ -110,7 +110,7 @@ export default function ManagePlayers() {
                 placeholder="Player name"
                 value={name}
                 required
-                onInput={(e: any) => setName(e.detail?.value ?? "")}
+                onInput={(e: any) => setName(e.detail?.value ?? e.target?.value ?? "")}
               />
             </div>
             <dl-button variant="primary" onClick={handleAdd}>Add</dl-button>
