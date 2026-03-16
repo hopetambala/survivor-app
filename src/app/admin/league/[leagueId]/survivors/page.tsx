@@ -71,88 +71,89 @@ export default function ManageSurvivors() {
   }
 
   return (
-    <main className="min-h-screen p-4 max-w-2xl mx-auto">
-      <button onClick={() => router.push(`/admin/league/${leagueId}`)} className="text-sm text-gray-500 hover:text-gray-800 mb-4 inline-block">
+    <main className="page page--narrow">
+      <button onClick={() => router.push(`/admin/league/${leagueId}`)} className="btn-back">
         &larr; Back to League
       </button>
-      <h1 className="text-2xl font-bold mb-4">Survivors</h1>
+      <dl-heading level={1}>Survivors</dl-heading>
 
-      <div className="flex gap-2 mb-4">
-        <button onClick={() => setShowBulk(false)} className={`text-sm px-3 py-1 rounded ${!showBulk ? "bg-blue-600 text-white" : "bg-gray-100"}`}>
+      <div className="cl-dlite-flex cl-dlite-sem-gap-200 cl-dlite-sem-mb-400 cl-dlite-sem-mt-400">
+        <button onClick={() => setShowBulk(false)} className={`tab ${!showBulk ? "tab--active" : "tab--inactive"}`}>
           Add One
         </button>
-        <button onClick={() => setShowBulk(true)} className={`text-sm px-3 py-1 rounded ${showBulk ? "bg-blue-600 text-white" : "bg-gray-100"}`}>
+        <button onClick={() => setShowBulk(true)} className={`tab ${showBulk ? "tab--active" : "tab--inactive"}`}>
           Bulk Add
         </button>
       </div>
 
       {showBulk ? (
-        <form onSubmit={handleBulkAdd} className="mb-6 flex flex-col gap-2">
-          <textarea
-            value={bulkNames}
-            onChange={(e) => setBulkNames(e.target.value)}
-            placeholder="One name per line"
-            rows={6}
-            className="border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-          <button type="submit" className="bg-green-600 text-white rounded-lg px-4 py-2 font-medium hover:bg-green-700">
-            Add All
-          </button>
+        <form onSubmit={handleBulkAdd} className="cl-dlite-sem-mb-600">
+          <dl-stack gap="200">
+            <dl-textarea
+              placeholder="One name per line"
+              rows={6}
+              value={bulkNames}
+              onInput={(e: any) => setBulkNames((e.target as any).value ?? "")}
+            />
+            <dl-button variant="primary" onClick={handleBulkAdd}>Add All</dl-button>
+          </dl-stack>
         </form>
       ) : (
-        <form onSubmit={handleAdd} className="mb-6 flex gap-2">
-          <input
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            placeholder="Survivor name"
-            required
-            className="flex-1 border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-          <input
-            value={tribe}
-            onChange={(e) => setTribe(e.target.value)}
-            placeholder="Tribe"
-            className="w-28 border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-          <button type="submit" className="bg-green-600 text-white rounded-lg px-4 py-2 font-medium hover:bg-green-700">
-            Add
-          </button>
+        <form onSubmit={handleAdd} className="cl-dlite-sem-mb-600">
+          <dl-cluster gap="200">
+            <div className="cl-dlite-flex-1">
+              <dl-input
+                placeholder="Survivor name"
+                value={name}
+                required
+                onInput={(e: any) => setName((e.target as any).value ?? "")}
+              />
+            </div>
+            <div style={{ width: "7rem" }}>
+              <dl-input
+                placeholder="Tribe"
+                value={tribe}
+                onInput={(e: any) => setTribe((e.target as any).value ?? "")}
+              />
+            </div>
+            <dl-button variant="primary" onClick={handleAdd}>Add</dl-button>
+          </dl-cluster>
         </form>
       )}
 
-      <div className="text-sm text-gray-500 mb-2">{survivors.length} survivors</div>
+      <dl-text size="300" color="secondary">{survivors.length} survivors</dl-text>
 
-      <div className="flex flex-col gap-2">
+      <dl-stack gap="200">
         {survivors.map((s) => (
-          <div key={s.id} className="border rounded-lg p-3 flex items-center justify-between gap-2">
-            <div className="flex-1">
-              <span className={s.status === "eliminated" ? "line-through text-gray-400" : "font-medium"}>
-                {s.name}
-              </span>
-              {s.tribe && <span className="text-xs text-gray-400 ml-2">{s.tribe}</span>}
-            </div>
-            <div className="flex items-center gap-2">
-              <input
-                defaultValue={s.tribe || ""}
-                placeholder="tribe"
-                onBlur={(e) => handleTribeUpdate(s.id, e.target.value)}
-                className="w-20 text-xs border rounded px-2 py-1"
-              />
-              <button
-                onClick={() => toggleStatus(s)}
-                className={`text-xs px-2 py-1 rounded ${
-                  s.status === "active" ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"
-                }`}
-              >
-                {s.status}
-              </button>
-              <button onClick={() => handleDelete(s.id)} className="text-red-500 hover:text-red-700 text-sm">
-                ✕
-              </button>
-            </div>
+          <div key={s.id} className="cl-dlite-card cl-dlite-sem-p-300">
+            <dl-cluster justify="between" gap="200">
+              <div className="cl-dlite-flex-1">
+                <span
+                  className={s.status === "eliminated" ? "cl-dlite-sem-text-tertiary cl-dlite-line-through" : ""}
+                  style={s.status !== "eliminated" ? { fontWeight: 500 } : undefined}
+                >
+                  {s.name}
+                </span>
+                {s.tribe && <span className="cl-dlite-sem-text-200 cl-dlite-sem-text-tertiary cl-dlite-sem-ml-200">{s.tribe}</span>}
+              </div>
+              <dl-cluster gap="200">
+                <dl-input
+                  placeholder="tribe"
+                  value={s.tribe || ""}
+                  style={{ width: "5rem", fontSize: "0.75rem" }}
+                  onChange={(e: any) => handleTribeUpdate(s.id, (e.target as any).value ?? "")}
+                />
+                <dl-badge variant={s.status === "active" ? "success" : "danger"}>
+                  {s.status}
+                </dl-badge>
+                <dl-button variant="danger" size="sm" onClick={() => handleDelete(s.id)}>
+                  ✕
+                </dl-button>
+              </dl-cluster>
+            </dl-cluster>
           </div>
         ))}
-      </div>
+      </dl-stack>
     </main>
   );
 }

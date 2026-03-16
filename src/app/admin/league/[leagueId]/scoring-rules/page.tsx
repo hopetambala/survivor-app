@@ -65,74 +65,75 @@ export default function ScoringRulesPage() {
   }
 
   return (
-    <main className="min-h-screen p-4 max-w-2xl mx-auto">
-      <button onClick={() => router.push(`/admin/league/${leagueId}`)} className="text-sm text-gray-500 hover:text-gray-800 mb-4 inline-block">
+    <main className="page page--narrow">
+      <button onClick={() => router.push(`/admin/league/${leagueId}`)} className="btn-back">
         &larr; Back to League
       </button>
-      <h1 className="text-2xl font-bold mb-4">Scoring Rules</h1>
+      <dl-heading level={1}>Scoring Rules</dl-heading>
 
-      <button
-        onClick={handleResetToDefaults}
-        className="text-sm text-blue-600 underline hover:text-blue-800 mb-4 inline-block"
-      >
-        Reset to defaults
-      </button>
-
-      <div className="flex flex-col gap-2 mb-6">
-        {rules.map((rule) => (
-          <div key={rule.id} className="border rounded-lg p-3 flex items-center gap-3">
-            <div className="flex-1">
-              <div className="font-medium text-sm">{rule.event_name}</div>
-              {rule.description && <div className="text-xs text-gray-400">{rule.description}</div>}
-            </div>
-            <div className="flex items-center gap-2 text-sm">
-              <input
-                type="number"
-                step="0.25"
-                defaultValue={rule.points}
-                onBlur={(e) => handleUpdate(rule, "points", parseFloat(e.target.value) || 0)}
-                className="w-16 text-center border rounded px-2 py-1 text-sm"
-              />
-              <span className="text-xs text-gray-400">{rule.is_variable ? "(var)" : "pts"}</span>
-              <button onClick={() => handleDelete(rule.id)} className="text-red-500 hover:text-red-700">✕</button>
-            </div>
-          </div>
-        ))}
+      <div className="cl-dlite-sem-mb-400">
+        <button onClick={handleResetToDefaults} className="btn-link cl-dlite-sem-text-200">
+          Reset to defaults
+        </button>
       </div>
 
-      <form onSubmit={handleAdd} className="border rounded-lg p-4 flex flex-col gap-3 bg-gray-50">
-        <h3 className="font-semibold text-sm">Add Custom Rule</h3>
-        <input
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          placeholder="Event name"
-          required
-          className="border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-        />
-        <div className="flex gap-2">
-          <input
-            type="number"
-            step="0.25"
-            value={points}
-            onChange={(e) => setPoints(e.target.value)}
-            placeholder="Points"
+      <dl-stack gap="200">
+        {rules.map((rule) => (
+          <div key={rule.id} className="cl-dlite-card cl-dlite-sem-p-300">
+            <dl-cluster justify="between" gap="300">
+              <div className="cl-dlite-flex-1">
+                <div className="cl-dlite-prim-font-medium cl-dlite-sem-text-300">{rule.event_name}</div>
+                {rule.description && <div className="cl-dlite-sem-text-200 cl-dlite-sem-text-tertiary">{rule.description}</div>}
+              </div>
+              <div className="cl-dlite-flex cl-dlite-items-center cl-dlite-sem-gap-200">
+                <input
+                  type="number"
+                  step="0.25"
+                  defaultValue={rule.points}
+                  onBlur={(e) => handleUpdate(rule, "points", parseFloat(e.target.value) || 0)}
+                  className="cl-dlite-input cl-dlite-text-center cl-dlite-sem-text-300"
+                  style={{ width: "4rem" }}
+                />
+                <span className="cl-dlite-sem-text-200 cl-dlite-sem-text-tertiary">{rule.is_variable ? "(var)" : "pts"}</span>
+                <dl-button variant="danger" size="sm" onClick={() => handleDelete(rule.id)}>✕</dl-button>
+              </div>
+            </dl-cluster>
+          </div>
+        ))}
+      </dl-stack>
+
+      <form onSubmit={handleAdd} className="cl-dlite-card cl-dlite-sem-p-400 cl-dlite-sem-bg-sunken cl-dlite-sem-mt-600">
+        <dl-stack gap="300">
+          <span className="cl-dlite-prim-font-semibold cl-dlite-sem-text-300">Add Custom Rule</span>
+          <dl-input
+            placeholder="Event name"
+            value={name}
             required
-            className="w-24 border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            onInput={(e: any) => setName((e.target as any).value ?? "")}
           />
-          <label className="flex items-center gap-1 text-sm">
-            <input type="checkbox" checked={isVariable} onChange={(e) => setIsVariable(e.target.checked)} />
-            Variable
-          </label>
-        </div>
-        <input
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-          placeholder="Description (optional)"
-          className="border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-        />
-        <button type="submit" className="bg-green-600 text-white rounded-lg px-4 py-2 font-medium text-sm hover:bg-green-700">
-          Add Rule
-        </button>
+          <dl-cluster gap="200">
+            <input
+              type="number"
+              step="0.25"
+              value={points}
+              onChange={(e) => setPoints(e.target.value)}
+              placeholder="Points"
+              required
+              className="cl-dlite-input cl-dlite-sem-text-300"
+              style={{ width: "6rem" }}
+            />
+            <label className="cl-dlite-flex cl-dlite-items-center cl-dlite-sem-gap-100 cl-dlite-sem-text-300">
+              <input type="checkbox" checked={isVariable} onChange={(e) => setIsVariable(e.target.checked)} />
+              Variable
+            </label>
+          </dl-cluster>
+          <dl-input
+            placeholder="Description (optional)"
+            value={description}
+            onInput={(e: any) => setDescription((e.target as any).value ?? "")}
+          />
+          <dl-button variant="primary" onClick={handleAdd}>Add Rule</dl-button>
+        </dl-stack>
       </form>
     </main>
   );

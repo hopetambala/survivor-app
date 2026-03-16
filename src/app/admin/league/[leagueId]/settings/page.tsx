@@ -69,88 +69,92 @@ export default function LeagueSettings() {
   }
 
   if (!league) {
-    return <main className="min-h-screen flex items-center justify-center"><p>Loading...</p></main>;
+    return <main className="page page--centered"><p>Loading...</p></main>;
   }
 
   return (
-    <main className="min-h-screen p-4 max-w-2xl mx-auto">
-      <button onClick={() => router.push(`/admin/league/${leagueId}`)} className="text-sm text-gray-500 hover:text-gray-800 mb-4 inline-block">
+    <main className="page page--narrow">
+      <button onClick={() => router.push(`/admin/league/${leagueId}`)} className="btn-back">
         &larr; Back to League
       </button>
-      <h1 className="text-2xl font-bold mb-2">League Settings</h1>
-      <p className="text-sm text-gray-500 mb-6">{league.name} &middot; {league.season_name}</p>
+      <dl-heading level={1}>League Settings</dl-heading>
+      <dl-text size="300" color="secondary">{league.name} &middot; {league.season_name}</dl-text>
 
       {/* Current roster info */}
-      <div className="border rounded-lg p-4 mb-6 bg-gray-50">
-        <h2 className="font-semibold mb-2">Current Roster</h2>
-        <div className="grid grid-cols-2 gap-2 text-sm">
-          <div>Players: <span className="font-medium">{playerCount}</span></div>
-          <div>Survivors: <span className="font-medium">{survivorCount}</span></div>
+      <div className="cl-dlite-card cl-dlite-sem-p-400 cl-dlite-sem-bg-sunken cl-dlite-sem-mt-600 cl-dlite-sem-mb-600">
+        <span className="cl-dlite-prim-font-semibold">Current Roster</span>
+        <div className="grid-2 cl-dlite-sem-mt-200 cl-dlite-sem-text-300">
+          <div>Players: <span className="cl-dlite-prim-font-medium">{playerCount}</span></div>
+          <div>Survivors: <span className="cl-dlite-prim-font-medium">{survivorCount}</span></div>
         </div>
       </div>
 
-      <form onSubmit={handleSave} className="flex flex-col gap-6">
-        {/* Picks per player */}
-        <div>
-          <label className="block font-medium mb-1">Picks per Player</label>
-          <p className="text-sm text-gray-500 mb-2">How many survivors each player drafts (their team size).</p>
-          <input
-            type="number"
-            min={1}
-            max={20}
-            value={numPicksPerPlayer}
-            onChange={(e) => setNumPicksPerPlayer(Number(e.target.value))}
-            className="border rounded-lg px-3 py-2 w-24 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-        </div>
-
-        {/* Max times drafted */}
-        <div>
-          <label className="block font-medium mb-1">Max Times a Survivor Can Be Drafted</label>
-          <p className="text-sm text-gray-500 mb-2">
-            How many different players can pick the same survivor. Needs to be high enough so every player can fill their team.
-          </p>
-          <input
-            type="number"
-            min={1}
-            max={50}
-            value={maxTimesDrafted}
-            onChange={(e) => setMaxTimesDrafted(Number(e.target.value))}
-            className="border rounded-lg px-3 py-2 w-24 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-        </div>
-
-        {/* Recommendation / validation */}
-        <div className={`border rounded-lg p-4 ${isEnoughSlots ? "bg-green-50 border-green-200" : "bg-red-50 border-red-200"}`}>
-          <h3 className="font-semibold mb-1">{isEnoughSlots ? "Looks good" : "Not enough survivor slots"}</h3>
-          <div className="text-sm space-y-1">
-            <p>Total picks needed: <span className="font-medium">{playerCount} players × {numPicksPerPlayer} picks = {totalPicksNeeded}</span></p>
-            <p>Available survivor slots: <span className="font-medium">{survivorCount} survivors × {maxTimesDrafted} max drafts = {totalSurvivorSlots}</span></p>
-            {!isEnoughSlots && survivorCount > 0 && (
-              <p className="mt-2">
-                <button
-                  type="button"
-                  onClick={() => setMaxTimesDrafted(recommendedMax)}
-                  className="text-blue-600 underline hover:text-blue-800"
-                >
-                  Set to recommended: {recommendedMax}
-                </button>
-              </p>
-            )}
-            {survivorCount === 0 && (
-              <p className="text-gray-500 mt-1">Add survivors first to see recommendations.</p>
-            )}
+      <form onSubmit={handleSave}>
+        <dl-stack gap="600">
+          {/* Picks per player */}
+          <div>
+            <label className="cl-dlite-block cl-dlite-prim-font-medium cl-dlite-sem-mb-100">Picks per Player</label>
+            <dl-text size="300" color="secondary">How many survivors each player drafts (their team size).</dl-text>
+            <div className="cl-dlite-sem-mt-200">
+              <input
+                type="number"
+                min={1}
+                max={20}
+                value={numPicksPerPlayer}
+                onChange={(e) => setNumPicksPerPlayer(Number(e.target.value))}
+                className="cl-dlite-input"
+                style={{ width: "6rem" }}
+              />
+            </div>
           </div>
-        </div>
 
-        <button
-          type="submit"
-          disabled={saving}
-          className="bg-blue-600 text-white rounded-lg px-4 py-2 font-medium hover:bg-blue-700 disabled:opacity-50 w-fit"
-        >
-          {saving ? "Saving…" : "Save Settings"}
-        </button>
-        {saved && <p className="text-green-600 text-sm -mt-4">Settings saved!</p>}
+          {/* Max times drafted */}
+          <div>
+            <label className="cl-dlite-block cl-dlite-prim-font-medium cl-dlite-sem-mb-100">Max Times a Survivor Can Be Drafted</label>
+            <dl-text size="300" color="secondary">
+              How many different players can pick the same survivor. Needs to be high enough so every player can fill their team.
+            </dl-text>
+            <div className="cl-dlite-sem-mt-200">
+              <input
+                type="number"
+                min={1}
+                max={50}
+                value={maxTimesDrafted}
+                onChange={(e) => setMaxTimesDrafted(Number(e.target.value))}
+                className="cl-dlite-input"
+                style={{ width: "6rem" }}
+              />
+            </div>
+          </div>
+
+          {/* Recommendation / validation */}
+          <div className={`cl-dlite-card cl-dlite-sem-p-400 ${isEnoughSlots ? "status-card--success" : "status-card--danger"}`}>
+            <span className="cl-dlite-prim-font-semibold">{isEnoughSlots ? "Looks good" : "Not enough survivor slots"}</span>
+            <div className="cl-dlite-sem-text-300">
+              <p>Total picks needed: <span className="cl-dlite-prim-font-medium">{playerCount} players × {numPicksPerPlayer} picks = {totalPicksNeeded}</span></p>
+              <p>Available survivor slots: <span className="cl-dlite-prim-font-medium">{survivorCount} survivors × {maxTimesDrafted} max drafts = {totalSurvivorSlots}</span></p>
+              {!isEnoughSlots && survivorCount > 0 && (
+                <div className="cl-dlite-sem-mt-200">
+                  <button
+                    type="button"
+                    onClick={() => setMaxTimesDrafted(recommendedMax)}
+                    className="btn-link"
+                  >
+                    Set to recommended: {recommendedMax}
+                  </button>
+                </div>
+              )}
+              {survivorCount === 0 && (
+                <dl-text size="300" color="secondary">Add survivors first to see recommendations.</dl-text>
+              )}
+            </div>
+          </div>
+
+          <dl-button variant="primary" disabled={saving || undefined} onClick={handleSave}>
+            {saving ? "Saving…" : "Save Settings"}
+          </dl-button>
+          {saved && <dl-text size="300" color="secondary" style={{ color: "var(--tk-dlite-semantic-color-feedback-success)" }}>Settings saved!</dl-text>}
+        </dl-stack>
       </form>
     </main>
   );

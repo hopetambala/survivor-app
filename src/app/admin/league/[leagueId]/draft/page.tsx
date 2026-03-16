@@ -155,51 +155,55 @@ export default function DraftPage() {
   }
 
   return (
-    <main className="min-h-screen p-4 max-w-7xl mx-auto">
-      <button onClick={() => router.push(`/admin/league/${leagueId}`)} className="text-sm text-gray-500 hover:text-gray-800 mb-4 inline-block">
+    <main className="page page--full">
+      <button onClick={() => router.push(`/admin/league/${leagueId}`)} className="btn-back">
         &larr; Back to League
       </button>
-      <h1 className="text-2xl font-bold mb-2">Snake Draft</h1>
-      <p className="text-sm text-gray-500 mb-4">
+      <dl-heading level={1}>Snake Draft</dl-heading>
+      <dl-text size="300" color="secondary">
         {numPicks} picks per player &middot; Each survivor can be drafted up to {maxDrafts} times
-      </p>
+      </dl-text>
 
       {/* Draft Status */}
       {draftState?.status === "not_started" && (
-        <div className="border rounded-lg p-4 mb-6 bg-blue-50">
-          <p className="mb-3">Ready to start the draft with {players.length} players and {survivors.length} survivors.</p>
-          <p className="text-sm text-gray-500 mb-3">
+        <div className="cl-dlite-card cl-dlite-sem-p-400 cl-dlite-sem-mt-600 cl-dlite-sem-mb-600 status-card--info">
+          <p className="cl-dlite-sem-mb-300">Ready to start the draft with {players.length} players and {survivors.length} survivors.</p>
+          <dl-text size="300" color="secondary">
             Snake order: Round 1 goes 1→{players.length}, Round 2 goes {players.length}→1, etc.
-          </p>
-          <button onClick={startDraft} className="bg-blue-600 text-white rounded-lg px-4 py-2 font-medium hover:bg-blue-700">
-            Start Draft
-          </button>
+          </dl-text>
+          <div className="cl-dlite-sem-mt-300">
+            <dl-button variant="primary" onClick={startDraft}>
+              Start Draft
+            </dl-button>
+          </div>
         </div>
       )}
 
       {draftState?.status === "completed" && (
-        <div className="border rounded-lg p-4 mb-6 bg-green-50">
-          <p className="font-semibold text-green-800">Draft Complete! 🎉</p>
-          <p className="text-sm text-gray-600 mt-1">{totalPicksMade} picks made.</p>
-          <button onClick={resetDraft} className="mt-2 text-sm text-red-600 underline hover:text-red-800">
-            Reset Draft
-          </button>
+        <div className="cl-dlite-card cl-dlite-sem-p-400 cl-dlite-sem-mt-600 cl-dlite-sem-mb-600 status-card--success">
+          <p className="cl-dlite-prim-font-semibold cl-dlite-sem-text-success">Draft Complete! 🎉</p>
+          <dl-text size="300" color="secondary">{totalPicksMade} picks made.</dl-text>
+          <div className="cl-dlite-sem-mt-200">
+            <button onClick={resetDraft} className="btn-link cl-dlite-sem-text-200 cl-dlite-sem-text-danger">
+              Reset Draft
+            </button>
+          </div>
         </div>
       )}
 
       {draftState?.status === "in_progress" && (
-        <div className="border rounded-lg p-4 mb-6 bg-yellow-50">
-          <p className="text-sm text-gray-500">
+        <div className="cl-dlite-card cl-dlite-sem-p-400 cl-dlite-sem-mt-600 cl-dlite-sem-mb-600 status-card--warning">
+          <dl-text size="300" color="secondary">
             Round {draftState.current_round} &middot; Pick {totalPicksMade + 1} of {totalPicksNeeded}
-          </p>
-          <p className="text-lg font-bold mt-1">
+          </dl-text>
+          <p className="cl-dlite-sem-text-400 cl-dlite-prim-font-bold cl-dlite-sem-mt-100">
             {currentPlayer?.name}&apos;s turn to pick
           </p>
-          <div className="flex gap-2 mt-3">
-            <button onClick={undoLastPick} disabled={draftPicks.length === 0} className="text-sm text-gray-500 hover:text-gray-800 underline disabled:opacity-50">
+          <div className="cl-dlite-flex cl-dlite-sem-gap-200 cl-dlite-sem-mt-300">
+            <button onClick={undoLastPick} disabled={draftPicks.length === 0} className="btn-link cl-dlite-sem-text-200 cl-dlite-disabled-opacity-50">
               Undo Last Pick
             </button>
-            <button onClick={resetDraft} className="text-sm text-red-600 underline hover:text-red-800">
+            <button onClick={resetDraft} className="btn-link cl-dlite-sem-text-200 cl-dlite-sem-text-danger">
               Reset Draft
             </button>
           </div>
@@ -207,17 +211,17 @@ export default function DraftPage() {
       )}
 
       {/* Side-by-side: Draft Board + Available Survivors */}
-      <div className="flex flex-col lg:flex-row gap-6">
+      <div className="flex-col-lg-row cl-dlite-sem-gap-600">
         {/* Draft Board */}
-        <div className="flex-1 min-w-0">
-          <h2 className="font-semibold mb-2">Draft Board</h2>
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm border-collapse">
+        <div className="cl-dlite-flex-1 cl-dlite-min-w-0">
+          <span className="cl-dlite-prim-font-semibold cl-dlite-sem-mb-200 cl-dlite-block">Draft Board</span>
+          <div className="cl-dlite-overflow-x-auto">
+            <table className="cl-dlite-table">
               <thead>
                 <tr>
-                  <th className="border p-2 bg-gray-50 text-left">Player</th>
+                  <th className="cl-dlite-text-left">Player</th>
                   {Array.from({ length: numPicks }, (_, i) => (
-                    <th key={i} className="border p-2 bg-gray-50 text-center">Pick {i + 1}</th>
+                    <th key={i} className="cl-dlite-text-center">Pick {i + 1}</th>
                   ))}
                 </tr>
               </thead>
@@ -226,13 +230,13 @@ export default function DraftPage() {
                   const picks = picksForPlayer(player.id);
                   const isCurrentPick = currentPlayerId === player.id && draftState?.status === "in_progress";
                   return (
-                    <tr key={player.id} className={isCurrentPick ? "bg-yellow-50" : ""}>
-                      <td className="border p-2 font-medium whitespace-nowrap">
+                    <tr key={player.id} className={isCurrentPick ? "row-highlight" : ""}>
+                      <td className="cl-dlite-prim-font-medium cl-dlite-whitespace-nowrap">
                         {player.name}
-                        {isCurrentPick && <span className="ml-1">👈</span>}
+                        {isCurrentPick && <span className="cl-dlite-sem-ml-100">👈</span>}
                       </td>
                       {Array.from({ length: numPicks }, (_, i) => (
-                        <td key={i} className="border p-2 text-center text-xs">
+                        <td key={i} className="cl-dlite-text-center cl-dlite-sem-text-200">
                           {picks[i] || "—"}
                         </td>
                       ))}
@@ -246,21 +250,21 @@ export default function DraftPage() {
 
         {/* Available Survivors */}
         {draftState?.status === "in_progress" && !isDraftDone && (
-          <div className="lg:w-72 lg:flex-shrink-0">
-            <h2 className="font-semibold mb-2">Available Survivors</h2>
-            <div className="flex flex-col gap-2 lg:max-h-[70vh] lg:overflow-y-auto">
+          <div className="lg-w-72">
+            <span className="cl-dlite-prim-font-semibold cl-dlite-sem-mb-200 cl-dlite-block">Available Survivors</span>
+            <div className="cl-dlite-flex cl-dlite-flex-col cl-dlite-sem-gap-200 lg-max-h-70vh">
               {survivors.map((s) => {
                 const count = draftCountFor(s.id);
                 const remaining = maxDrafts - count;
-                let bgClass: string;
+                let statusClass: string;
                 if (remaining <= 0) {
-                  bgClass = "bg-red-50 border-red-200 opacity-60 cursor-not-allowed";
+                  statusClass = "draft-pick--taken";
                 } else if (remaining === 1) {
-                  bgClass = "bg-yellow-50 border-yellow-200 hover:bg-yellow-100 cursor-pointer";
+                  statusClass = "draft-pick--limited";
                 } else if (count === 0) {
-                  bgClass = "bg-green-50 border-green-200 hover:bg-green-100 cursor-pointer";
+                  statusClass = "draft-pick--available";
                 } else {
-                  bgClass = "bg-blue-50 border-blue-200 hover:bg-blue-100 cursor-pointer";
+                  statusClass = "draft-pick--drafted";
                 }
                 const available = remaining > 0;
                 return (
@@ -268,10 +272,10 @@ export default function DraftPage() {
                     key={s.id}
                     onClick={() => available && makePick(s.id)}
                     disabled={!available}
-                    className={`border rounded-lg p-2 text-left text-sm transition-colors ${bgClass}`}
+                    className={`cl-dlite-card cl-dlite-text-left cl-dlite-sem-text-300 cl-dlite-sem-transition-colors ${statusClass}`}
                   >
-                    <div className="font-medium">{s.name}</div>
-                    <div className="text-xs text-gray-400">
+                    <div className="cl-dlite-prim-font-medium">{s.name}</div>
+                    <div className="cl-dlite-sem-text-200 cl-dlite-sem-text-tertiary">
                       {s.tribe && `${s.tribe} · `}
                       {count}/{maxDrafts} drafted
                     </div>

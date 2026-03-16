@@ -16,37 +16,43 @@ export default function Home() {
   }
 
   return (
-    <main className="min-h-screen flex flex-col items-center justify-center p-4 gap-8">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold mb-2">Fantasy Survivor</h1>
-        <p className="text-gray-500">Enter your league code or sign in as commissioner</p>
+    <main className="page page--centered">
+      <div className="cl-dlite-text-center">
+        <dl-heading level={1}>Fantasy Survivor</dl-heading>
+        <dl-text color="secondary">Enter your league code or sign in as commissioner</dl-text>
       </div>
 
-      <form onSubmit={handleJoin} className="flex flex-col items-center gap-4 w-full max-w-xs">
-        <input
+      <form onSubmit={handleJoin} className="cl-dlite-flex cl-dlite-flex-col cl-dlite-items-center cl-dlite-sem-gap-400 cl-dlite-w-full" style={{ maxWidth: "20rem" }}>
+        <dl-input
           type="text"
-          maxLength={4}
-          value={code}
-          onChange={(e) => setCode(e.target.value.replace(/\D/g, ""))}
           placeholder="4-digit league code"
-          className="w-full text-center text-2xl tracking-widest border rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          value={code}
+          style={{ textAlign: "center", fontSize: "1.5rem", letterSpacing: "0.1em" }}
+          onInput={(e: any) => {
+            const val = ((e.target as any).value ?? "").replace(/\D/g, "");
+            setCode(val.slice(0, 4));
+          }}
         />
-        <button
-          type="submit"
-          disabled={code.length !== 4}
-          className="w-full bg-blue-600 text-white rounded-lg px-4 py-3 font-medium disabled:opacity-50 disabled:cursor-not-allowed hover:bg-blue-700 transition-colors"
+        <dl-button
+          variant="primary"
+          full-width
+          disabled={code.length !== 4 || undefined}
+          onClick={handleJoin}
         >
           View League
-        </button>
+        </dl-button>
       </form>
 
-      <div className="border-t pt-4 w-full max-w-xs text-center">
-        <button
-          onClick={() => router.push("/admin")}
-          className="text-sm text-gray-500 hover:text-gray-800 underline"
-        >
-          Commissioner Login
-        </button>
+      <div style={{ maxWidth: "20rem" }} className="cl-dlite-w-full">
+        <dl-divider />
+        <div className="cl-dlite-text-center cl-dlite-sem-mt-400">
+          <button
+            onClick={() => router.push("/admin")}
+            className="btn-link cl-dlite-sem-text-200"
+          >
+            Commissioner Login
+          </button>
+        </div>
       </div>
     </main>
   );
