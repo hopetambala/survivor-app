@@ -96,7 +96,7 @@ export default function ScoringRulesPage() {
                   style={{ width: "4rem" }}
                 />
                 <span className="cl-dlite-sem-text-200 cl-dlite-sem-text-tertiary">{rule.is_variable ? "(var)" : "pts"}</span>
-                <dl-button variant="danger" size="sm" onClick={() => handleDelete(rule.id)}>✕</dl-button>
+                <dl-icon-button variant="secondary" size="sm" label="Delete rule" onClick={() => handleDelete(rule.id)}>✕</dl-icon-button>
               </div>
             </dl-cluster>
           </div>

@@ -146,9 +146,7 @@ export default function ManageSurvivors() {
                     {s.status}
                   </dl-badge>
                 </dl-button>
-                <dl-button variant="danger" size="sm" onClick={() => handleDelete(s.id)}>
-                  ✕
-                </dl-button>
+                <dl-icon-button variant="secondary" size="sm" label="Delete survivor" onClick={() => handleDelete(s.id)}>✕</dl-icon-button>
               </dl-cluster>
             </dl-cluster>
           </div>

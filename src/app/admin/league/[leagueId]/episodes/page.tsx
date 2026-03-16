@@ -71,7 +71,7 @@ export default function ManageEpisodes() {
                 {ep.title && <span className="cl-dlite-sem-text-secondary cl-dlite-sem-ml-200">{ep.title}</span>}
                 {ep.is_scored && <dl-badge variant="success">scored</dl-badge>}
               </div>
-              <dl-button variant="danger" size="sm" onClick={() => handleDelete(ep.id)}>✕</dl-button>
+              <dl-icon-button variant="secondary" size="sm" label="Delete episode" onClick={() => handleDelete(ep.id)}>✕</dl-icon-button>
             </dl-cluster>
             <div className="cl-dlite-sem-mt-200">
               <dl-cluster gap="200">

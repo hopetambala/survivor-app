@@ -148,9 +148,7 @@ export default function ManagePlayers() {
                 >
                   ▼
                 </dl-icon-button>
-                <dl-button variant="danger" size="sm" onClick={() => handleDelete(p.id)}>
-                  ✕
-                </dl-button>
+                <dl-icon-button variant="secondary" size="sm" label="Delete player" onClick={() => handleDelete(p.id)}>✕</dl-icon-button>
               </dl-cluster>
             </dl-cluster>
           </div>
