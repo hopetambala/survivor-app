@@ -20,7 +20,7 @@
     "react": "19.2.3",
     "react-dom": "19.2.3",
     "style-dictionary-dlite-tokens": "^0.2.5",
-    "web-components-dlite": "^0.1.1"
+    "web-components-dlite": "^0.1.2"
   },
   "devDependencies": {
     "@commitlint/cli": "^20.4.4",

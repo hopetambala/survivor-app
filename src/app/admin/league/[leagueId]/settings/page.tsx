@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { createClient } from "../../../../../lib/supabase/client";
+import { getEventValue } from "../../../../../dlite-design-system/wc-helpers";
 import type { League } from "../../../../../lib/supabase/types";
 
 export default function LeagueSettings() {
@@ -69,7 +70,7 @@ export default function LeagueSettings() {
   }
 
   if (!league) {
-    return <main className="page page--centered"><dl-spinner></dl-spinner></main>;
+    return <main className="page page--centered"><dl-spinner size="md"></dl-spinner></main>;
   }
 
   return (
@@ -96,13 +97,12 @@ export default function LeagueSettings() {
             <label className="cl-dlite-block cl-dlite-sem-font-heading cl-dlite-prim-font-medium cl-dlite-sem-mb-100">Picks per Player</label>
             <dl-text size="300" color="secondary">How many survivors each player drafts (their team size).</dl-text>
             <div className="cl-dlite-sem-mt-200">
-              <input
+              <dl-input
                 type="number"
-                min={1}
-                max={20}
-                value={numPicksPerPlayer}
-                onChange={(e) => setNumPicksPerPlayer(Number(e.target.value))}
-                className="cl-dlite-input"
+                min="1"
+                max="20"
+                value={String(numPicksPerPlayer)}
+                onInput={(e: any) => setNumPicksPerPlayer(Number(getEventValue(e)))}
                 style={{ width: "6rem" }}
               />
             </div>
@@ -115,13 +115,12 @@ export default function LeagueSettings() {
               How many different players can pick the same survivor. Needs to be high enough so every player can fill their team.
             </dl-text>
             <div className="cl-dlite-sem-mt-200">
-              <input
+              <dl-input
                 type="number"
-                min={1}
-                max={50}
-                value={maxTimesDrafted}
-                onChange={(e) => setMaxTimesDrafted(Number(e.target.value))}
-                className="cl-dlite-input"
+                min="1"
+                max="50"
+                value={String(maxTimesDrafted)}
+                onInput={(e: any) => setMaxTimesDrafted(Number(getEventValue(e)))}
                 style={{ width: "6rem" }}
               />
             </div>
@@ -131,8 +130,8 @@ export default function LeagueSettings() {
           <div className={`cl-dlite-card cl-dlite-sem-p-400 ${isEnoughSlots ? "status-card--success" : "status-card--danger"}`}>
             <span className="cl-dlite-sem-font-heading cl-dlite-prim-font-semibold">{isEnoughSlots ? "Looks good" : "Not enough survivor slots"}</span>
             <div className="cl-dlite-sem-text-300">
-              <p>Total picks needed: <span className="cl-dlite-sem-font-heading cl-dlite-prim-font-medium">{playerCount} players × {numPicksPerPlayer} picks = {totalPicksNeeded}</span></p>
-              <p>Available survivor slots: <span className="cl-dlite-sem-font-heading cl-dlite-prim-font-medium">{survivorCount} survivors × {maxTimesDrafted} max drafts = {totalSurvivorSlots}</span></p>
+              <dl-text size="300">Total picks needed: {playerCount} players × {numPicksPerPlayer} picks = {totalPicksNeeded}</dl-text>
+              <dl-text size="300">Available survivor slots: {survivorCount} survivors × {maxTimesDrafted} max drafts = {totalSurvivorSlots}</dl-text>
               {!isEnoughSlots && survivorCount > 0 && (
                 <div className="cl-dlite-sem-mt-200">
                   <dl-button variant="ghost" size="sm" onClick={() => setMaxTimesDrafted(recommendedMax)}>
