@@ -67,15 +67,15 @@ export default function ScoringRulesPage() {
 
   return (
     <main className="page page--narrow">
-      <button onClick={() => router.push(`/admin/league/${leagueId}`)} className="btn-back">
+      <dl-button variant="ghost" size="sm" onClick={() => router.push(`/admin/league/${leagueId}`)}>
         &larr; Back to League
-      </button>
+      </dl-button>
       <dl-heading level={1}>Scoring Rules</dl-heading>
 
       <div className="cl-dlite-sem-mb-400">
-        <button onClick={handleResetToDefaults} className="btn-link cl-dlite-sem-text-200">
+        <dl-button variant="ghost" size="sm" onClick={handleResetToDefaults}>
           Reset to defaults
-        </button>
+        </dl-button>
       </div>
 
       <dl-stack gap="200">
@@ -123,10 +123,9 @@ export default function ScoringRulesPage() {
               className="cl-dlite-input cl-dlite-sem-text-300"
               style={{ width: "6rem" }}
             />
-            <label className="cl-dlite-flex cl-dlite-items-center cl-dlite-sem-gap-100 cl-dlite-sem-text-300">
-              <input type="checkbox" checked={isVariable} onChange={(e) => setIsVariable(e.target.checked)} />
+            <dl-checkbox checked={isVariable || undefined} onChange={() => setIsVariable(!isVariable)}>
               Variable
-            </label>
+            </dl-checkbox>
           </dl-cluster>
           <dl-input
             placeholder="Description (optional)"

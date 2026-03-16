@@ -92,12 +92,9 @@ export default function ScoreEpisode() {
 
   return (
     <main className="page page--full">
-      <button
-        onClick={() => router.push(`/admin/league/${leagueId}/episodes`)}
-        className="btn-back"
-      >
+      <dl-button variant="ghost" size="sm" onClick={() => router.push(`/admin/league/${leagueId}/episodes`)}>
         &larr; Back to Episodes
-      </button>
+      </dl-button>
 
       <dl-cluster justify="between" gap="400">
         <div>

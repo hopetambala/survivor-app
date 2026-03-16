@@ -86,9 +86,9 @@ export default function AdminDashboard() {
     <main className="page page--narrow">
       <dl-cluster justify="between" gap="400">
         <dl-heading level={1}>My Leagues</dl-heading>
-        <button onClick={handleSignOut} className="btn-link cl-dlite-sem-text-200">
+        <dl-button variant="ghost" size="sm" onClick={handleSignOut}>
           Sign Out
-        </button>
+        </dl-button>
       </dl-cluster>
 
       <div className="cl-dlite-sem-mt-600 cl-dlite-sem-mb-600">

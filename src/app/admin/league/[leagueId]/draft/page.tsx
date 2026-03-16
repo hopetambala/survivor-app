@@ -156,9 +156,9 @@ export default function DraftPage() {
 
   return (
     <main className="page page--full">
-      <button onClick={() => router.push(`/admin/league/${leagueId}`)} className="btn-back">
+      <dl-button variant="ghost" size="sm" onClick={() => router.push(`/admin/league/${leagueId}`)}>
         &larr; Back to League
-      </button>
+      </dl-button>
       <dl-heading level={1}>Snake Draft</dl-heading>
       <dl-text size="300" color="secondary">
         {numPicks} picks per player &middot; Each survivor can be drafted up to {maxDrafts} times
@@ -184,9 +184,9 @@ export default function DraftPage() {
           <p className="cl-dlite-sem-font-heading cl-dlite-prim-font-semibold cl-dlite-sem-text-success">Draft Complete! 🎉</p>
           <dl-text size="300" color="secondary">{totalPicksMade} picks made.</dl-text>
           <div className="cl-dlite-sem-mt-200">
-            <button onClick={resetDraft} className="btn-link cl-dlite-sem-text-200 cl-dlite-sem-text-danger">
+            <dl-button variant="ghost" size="sm" onClick={resetDraft}>
               Reset Draft
-            </button>
+            </dl-button>
           </div>
         </div>
       )}
@@ -200,12 +200,12 @@ export default function DraftPage() {
             {currentPlayer?.name}&apos;s turn to pick
           </p>
           <div className="cl-dlite-flex cl-dlite-sem-gap-200 cl-dlite-sem-mt-300">
-            <button onClick={undoLastPick} disabled={draftPicks.length === 0} className="btn-link cl-dlite-sem-text-200 cl-dlite-disabled-opacity-50">
+            <dl-button variant="ghost" size="sm" disabled={draftPicks.length === 0 || undefined} onClick={undoLastPick}>
               Undo Last Pick
-            </button>
-            <button onClick={resetDraft} className="btn-link cl-dlite-sem-text-200 cl-dlite-sem-text-danger">
+            </dl-button>
+            <dl-button variant="ghost" size="sm" onClick={resetDraft}>
               Reset Draft
-            </button>
+            </dl-button>
           </div>
         </div>
       )}

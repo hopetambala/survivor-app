@@ -47,12 +47,9 @@ export default function Home() {
       <div style={{ maxWidth: "20rem" }} className="cl-dlite-w-full">
         <dl-divider />
         <div className="cl-dlite-text-center cl-dlite-sem-mt-400">
-          <button
-            onClick={() => router.push("/admin")}
-            className="btn-link cl-dlite-sem-text-200"
-          >
+          <dl-button variant="ghost" size="sm" onClick={() => router.push("/admin")}>
             Commissioner Login
-          </button>
+          </dl-button>
         </div>
       </div>
     </main>

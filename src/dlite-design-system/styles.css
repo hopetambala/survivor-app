@@ -135,35 +135,6 @@
   .lg-max-h-70vh { max-height: 70vh; overflow-y: auto; }
 }
 
-/* ===== LINK-STYLE BUTTON (back nav, text links) ===== */
-.btn-link {
-  background: none;
-  color: var(--tk-dlite-semantic-color-text-secondary);
-  text-decoration: underline;
-  padding: 0;
-  cursor: pointer;
-  border: none;
-}
-
-.btn-link:hover {
-  color: var(--tk-dlite-semantic-color-text-primary);
-}
-
-.btn-back {
-  background: none;
-  color: var(--tk-dlite-semantic-color-text-secondary);
-  padding: 0;
-  font-size: var(--tk-dlite-semantic-typography-type-body-small-size);
-  margin-bottom: var(--tk-dlite-semantic-spacing-400);
-  display: inline-block;
-  cursor: pointer;
-  border: none;
-}
-
-.btn-back:hover {
-  color: var(--tk-dlite-semantic-color-text-primary);
-}
-
 /* ===== STATUS CARDS ===== */
 .status-card--info {
   background-color: color-mix(in srgb, var(--tk-dlite-semantic-color-feedback-info) 8%, transparent);

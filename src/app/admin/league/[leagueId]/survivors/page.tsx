@@ -73,9 +73,9 @@ export default function ManageSurvivors() {
 
   return (
     <main className="page page--narrow">
-      <button onClick={() => router.push(`/admin/league/${leagueId}`)} className="btn-back">
+      <dl-button variant="ghost" size="sm" onClick={() => router.push(`/admin/league/${leagueId}`)}>
         &larr; Back to League
-      </button>
+      </dl-button>
       <dl-heading level={1}>Survivors</dl-heading>
 
       <div className="cl-dlite-sem-mb-400 cl-dlite-sem-mt-400">
@@ -139,11 +139,13 @@ export default function ManageSurvivors() {
                   placeholder="tribe"
                   value={s.tribe || ""}
                   style={{ width: "5rem", fontSize: "0.75rem" }}
-                  onChange={(e: any) => handleTribeUpdate(s.id, getEventValue(e))}
+                  onBlur={(e: any) => handleTribeUpdate(s.id, getEventValue(e))}
                 />
-                <dl-badge variant={s.status === "active" ? "success" : "danger"}>
-                  {s.status}
-                </dl-badge>
+                <dl-button variant={s.status === "active" ? "secondary" : "danger"} size="sm" onClick={() => toggleStatus(s)}>
+                  <dl-badge variant={s.status === "active" ? "success" : "danger"}>
+                    {s.status}
+                  </dl-badge>
+                </dl-button>
                 <dl-button variant="danger" size="sm" onClick={() => handleDelete(s.id)}>
                   ✕
                 </dl-button>

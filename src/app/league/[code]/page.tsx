@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { createClient } from "../../../lib/supabase/client";
 import { calculatePlayerScores } from "../../../lib/scoring";
 import { getEventValue } from "../../../dlite-design-system/wc-helpers";
@@ -11,6 +11,7 @@ type Tab = "leaderboard" | "rosters" | "episodes" | "survivors";
 
 export default function LeaguePublicView() {
   const { code } = useParams<{ code: string }>();
+  const router = useRouter();
   const [league, setLeague] = useState<League | null>(null);
   const [survivors, setSurvivors] = useState<Survivor[]>([]);
   const [players, setPlayers] = useState<Player[]>([]);
@@ -65,7 +66,7 @@ export default function LeaguePublicView() {
           <dl-heading level={1}>League Not Found</dl-heading>
           <dl-text color="secondary">No league with code &quot;{code}&quot; exists.</dl-text>
           <div className="cl-dlite-sem-mt-400">
-            <a href="/" className="btn-link">Go back</a>
+            <dl-button variant="ghost" size="sm" onClick={() => router.push("/")}>Go back</dl-button>
           </div>
         </div>
       </main>
@@ -91,7 +92,7 @@ export default function LeaguePublicView() {
   return (
     <main className="page page--wide">
       <div className="cl-dlite-sem-mb-400">
-        <a href="/" className="btn-back">&larr; Home</a>
+        <dl-button variant="ghost" size="sm" onClick={() => router.push("/")}>&larr; Home</dl-button>
       </div>
 
       <div className="cl-dlite-sem-mb-600">

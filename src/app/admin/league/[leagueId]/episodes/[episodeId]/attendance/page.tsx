@@ -68,12 +68,9 @@ export default function AttendancePage() {
 
   return (
     <main className="page" style={{ maxWidth: "32rem", marginInline: "auto" }}>
-      <button
-        onClick={() => router.push(`/admin/league/${leagueId}/episodes`)}
-        className="btn-back"
-      >
+      <dl-button variant="ghost" size="sm" onClick={() => router.push(`/admin/league/${leagueId}/episodes`)}>
         &larr; Back to Episodes
-      </button>
+      </dl-button>
 
       <dl-cluster justify="between" gap="400">
         <div>

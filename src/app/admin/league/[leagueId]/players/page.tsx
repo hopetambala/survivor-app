@@ -78,9 +78,9 @@ export default function ManagePlayers() {
 
   return (
     <main className="page page--narrow">
-      <button onClick={() => router.push(`/admin/league/${leagueId}`)} className="btn-back">
+      <dl-button variant="ghost" size="sm" onClick={() => router.push(`/admin/league/${leagueId}`)}>
         &larr; Back to League
-      </button>
+      </dl-button>
       <dl-heading level={1}>Players</dl-heading>
       <dl-text size="300" color="secondary">Add participants and set their draft order (drag to reorder).</dl-text>
 

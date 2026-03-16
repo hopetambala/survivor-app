@@ -57,9 +57,9 @@ export default function LeagueOverview() {
 
   return (
     <main className="page page--narrow">
-      <button onClick={() => router.push("/admin/dashboard")} className="btn-back">
+      <dl-button variant="ghost" size="sm" onClick={() => router.push("/admin/dashboard")}>
         &larr; All Leagues
-      </button>
+      </dl-button>
 
       <div className="cl-dlite-sem-mb-600">
         <dl-heading level={1}>{league.name}</dl-heading>

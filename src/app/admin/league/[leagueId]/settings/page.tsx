@@ -74,9 +74,9 @@ export default function LeagueSettings() {
 
   return (
     <main className="page page--narrow">
-      <button onClick={() => router.push(`/admin/league/${leagueId}`)} className="btn-back">
+      <dl-button variant="ghost" size="sm" onClick={() => router.push(`/admin/league/${leagueId}`)}>
         &larr; Back to League
-      </button>
+      </dl-button>
       <dl-heading level={1}>League Settings</dl-heading>
       <dl-text size="300" color="secondary">{league.name} &middot; {league.season_name}</dl-text>
 
@@ -135,13 +135,9 @@ export default function LeagueSettings() {
               <p>Available survivor slots: <span className="cl-dlite-sem-font-heading cl-dlite-prim-font-medium">{survivorCount} survivors × {maxTimesDrafted} max drafts = {totalSurvivorSlots}</span></p>
               {!isEnoughSlots && survivorCount > 0 && (
                 <div className="cl-dlite-sem-mt-200">
-                  <button
-                    type="button"
-                    onClick={() => setMaxTimesDrafted(recommendedMax)}
-                    className="btn-link"
-                  >
+                  <dl-button variant="ghost" size="sm" onClick={() => setMaxTimesDrafted(recommendedMax)}>
                     Set to recommended: {recommendedMax}
-                  </button>
+                  </dl-button>
                 </div>
               )}
               {survivorCount === 0 && (

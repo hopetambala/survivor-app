@@ -77,12 +77,9 @@ export default function AdminAuth() {
         </form>
 
         <div className="cl-dlite-text-center cl-dlite-sem-mt-400">
-          <button
-            onClick={() => { setIsSignUp(!isSignUp); setError(""); }}
-            className="btn-link cl-dlite-sem-text-200"
-          >
+          <dl-button variant="ghost" size="sm" onClick={() => { setIsSignUp(!isSignUp); setError(""); }}>
             {isSignUp ? "Already have an account? Sign in" : "Need an account? Sign up"}
-          </button>
+          </dl-button>
         </div>
 
         <div className="cl-dlite-text-center cl-dlite-sem-mt-600">
