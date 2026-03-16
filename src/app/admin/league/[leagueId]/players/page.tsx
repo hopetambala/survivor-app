@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { createClient } from "../../../../../lib/supabase/client";
+import { getEventValue } from "../../../../../dlite-design-system/wc-helpers";
 import type { Player } from "../../../../../lib/supabase/types";
 
 export default function ManagePlayers() {
@@ -76,81 +77,83 @@ export default function ManagePlayers() {
   }
 
   return (
-    <main className="min-h-screen p-4 max-w-2xl mx-auto">
-      <button onClick={() => router.push(`/admin/league/${leagueId}`)} className="text-sm text-gray-500 hover:text-gray-800 mb-4 inline-block">
+    <main className="page page--narrow">
+      <dl-button variant="ghost" size="sm" onClick={() => router.push(`/admin/league/${leagueId}`)}>
         &larr; Back to League
-      </button>
-      <h1 className="text-2xl font-bold mb-4">Players</h1>
-      <p className="text-sm text-gray-500 mb-4">Add participants and set their draft order (drag to reorder).</p>
+      </dl-button>
+      <dl-heading level={1}>Players</dl-heading>
+      <dl-text size="300" color="secondary">Add participants and set their draft order (drag to reorder).</dl-text>
 
-      <div className="flex gap-2 mb-4">
-        <button onClick={() => setShowBulk(false)} className={`text-sm px-3 py-1 rounded ${!showBulk ? "bg-blue-600 text-white" : "bg-gray-100"}`}>
-          Add One
-        </button>
-        <button onClick={() => setShowBulk(true)} className={`text-sm px-3 py-1 rounded ${showBulk ? "bg-blue-600 text-white" : "bg-gray-100"}`}>
-          Bulk Add
-        </button>
+      <div className="cl-dlite-sem-mb-400 cl-dlite-sem-mt-400">
+        <dl-tabs value={showBulk ? "bulk" : "one"} onChange={(e: any) => setShowBulk(e.detail.value === "bulk")}>
+          <dl-tab label="Add One" value="one"></dl-tab>
+          <dl-tab label="Bulk Add" value="bulk"></dl-tab>
+        </dl-tabs>
       </div>
 
       {showBulk ? (
-        <form onSubmit={handleBulkAdd} className="mb-6 flex flex-col gap-2">
-          <textarea
-            value={bulkNames}
-            onChange={(e) => setBulkNames(e.target.value)}
-            placeholder="One name per line"
-            rows={6}
-            className="border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-          <button type="submit" className="bg-green-600 text-white rounded-lg px-4 py-2 font-medium hover:bg-green-700">
-            Add All
-          </button>
+        <form onSubmit={handleBulkAdd} className="cl-dlite-sem-mb-600">
+          <dl-stack gap="200">
+            <dl-textarea
+              placeholder="One name per line"
+              rows={6}
+              value={bulkNames}
+              onInput={(e: any) => setBulkNames(getEventValue(e))}
+            />
+            <dl-button variant="primary" onClick={handleBulkAdd}>Add All</dl-button>
+          </dl-stack>
         </form>
       ) : (
-        <form onSubmit={handleAdd} className="mb-6 flex gap-2">
-          <input
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            placeholder="Player name"
-            required
-            className="flex-1 border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-          <button type="submit" className="bg-green-600 text-white rounded-lg px-4 py-2 font-medium hover:bg-green-700">
-            Add
-          </button>
+        <form onSubmit={handleAdd} className="cl-dlite-sem-mb-600">
+          <dl-cluster gap="200">
+            <div className="cl-dlite-flex-1">
+              <dl-input
+                placeholder="Player name"
+                value={name}
+                required
+                onInput={(e: any) => setName(getEventValue(e))}
+              />
+            </div>
+            <dl-button variant="primary" onClick={handleAdd}>Add</dl-button>
+          </dl-cluster>
         </form>
       )}
 
-      <div className="text-sm text-gray-500 mb-2">{players.length} players</div>
+      <dl-text size="300" color="secondary">{players.length} players</dl-text>
 
-      <div className="flex flex-col gap-2">
+      <dl-stack gap="200">
         {players.map((p, idx) => (
-          <div key={p.id} className="border rounded-lg p-3 flex items-center justify-between gap-2">
-            <div className="flex items-center gap-3">
-              <span className="text-gray-400 font-mono text-sm w-6">{idx + 1}.</span>
-              <span className="font-medium">{p.name}</span>
-            </div>
-            <div className="flex items-center gap-1">
-              <button
-                onClick={() => handleReorder(p.id, "up")}
-                disabled={idx === 0}
-                className="text-gray-400 hover:text-gray-700 disabled:opacity-25 px-1"
-              >
-                ▲
-              </button>
-              <button
-                onClick={() => handleReorder(p.id, "down")}
-                disabled={idx === players.length - 1}
-                className="text-gray-400 hover:text-gray-700 disabled:opacity-25 px-1"
-              >
-                ▼
-              </button>
-              <button onClick={() => handleDelete(p.id)} className="text-red-500 hover:text-red-700 text-sm ml-2">
-                ✕
-              </button>
-            </div>
+          <div key={p.id} className="cl-dlite-card cl-dlite-sem-p-300">
+            <dl-cluster justify="between" gap="200">
+              <dl-cluster gap="300">
+                <span className="cl-dlite-sem-font-mono cl-dlite-sem-text-300 cl-dlite-sem-text-tertiary" style={{ width: "1.5rem" }}>{idx + 1}.</span>
+                <span className="cl-dlite-sem-font-heading cl-dlite-prim-font-medium">{p.name}</span>
+              </dl-cluster>
+              <dl-cluster gap="100">
+                <dl-icon-button
+                  variant="ghost"
+                  size="sm"
+                  label="Move up"
+                  disabled={idx === 0 || undefined}
+                  onClick={() => handleReorder(p.id, "up")}
+                >
+                  ▲
+                </dl-icon-button>
+                <dl-icon-button
+                  variant="ghost"
+                  size="sm"
+                  label="Move down"
+                  disabled={idx === players.length - 1 || undefined}
+                  onClick={() => handleReorder(p.id, "down")}
+                >
+                  ▼
+                </dl-icon-button>
+                <dl-icon-button variant="secondary" size="sm" label="Delete player" onClick={() => handleDelete(p.id)}>✕</dl-icon-button>
+              </dl-cluster>
+            </dl-cluster>
           </div>
         ))}
-      </div>
+      </dl-stack>
     </main>
   );
 }

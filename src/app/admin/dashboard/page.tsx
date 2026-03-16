@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "../../../lib/supabase/client";
 import { generateLeagueCode, DEFAULT_SCORING_RULES } from "../../../lib/scoring";
+import { getEventValue } from "../../../dlite-design-system/wc-helpers";
 import type { League } from "../../../lib/supabase/types";
 
 export default function AdminDashboard() {
@@ -78,63 +79,64 @@ export default function AdminDashboard() {
   }
 
   if (loading) {
-    return <main className="min-h-screen flex items-center justify-center"><p>Loading...</p></main>;
+    return <main className="page page--centered"><p>Loading...</p></main>;
   }
 
   return (
-    <main className="min-h-screen p-4 max-w-2xl mx-auto">
-      <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold">My Leagues</h1>
-        <button onClick={handleSignOut} className="text-sm text-gray-500 hover:text-gray-800 underline">
+    <main className="page page--narrow">
+      <dl-cluster justify="between" gap="400">
+        <dl-heading level={1}>My Leagues</dl-heading>
+        <dl-button variant="ghost" size="sm" onClick={handleSignOut}>
           Sign Out
-        </button>
+        </dl-button>
+      </dl-cluster>
+
+      <div className="cl-dlite-sem-mt-600 cl-dlite-sem-mb-600">
+        <dl-button variant="primary" onClick={() => setShowCreate(!showCreate)}>
+          + New League
+        </dl-button>
       </div>
 
-      <button
-        onClick={() => setShowCreate(!showCreate)}
-        className="mb-6 bg-blue-600 text-white rounded-lg px-4 py-2 font-medium hover:bg-blue-700 transition-colors"
-      >
-        + New League
-      </button>
-
       {showCreate && (
-        <form onSubmit={handleCreate} className="mb-6 border rounded-lg p-4 flex flex-col gap-3">
-          <input
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            placeholder="League name (e.g. Fantasy Survivor)"
-            required
-            className="border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-          <input
-            value={seasonName}
-            onChange={(e) => setSeasonName(e.target.value)}
-            placeholder="Season name (e.g. Season 50 CA)"
-            required
-            className="border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-          <button type="submit" className="bg-green-600 text-white rounded-lg px-4 py-2 font-medium hover:bg-green-700">
-            Create League
-          </button>
+        <form onSubmit={handleCreate} className="cl-dlite-sem-mb-600">
+          <dl-card>
+            <dl-stack gap="300">
+              <dl-input
+                placeholder="League name (e.g. Fantasy Survivor)"
+                value={name}
+                required
+                onInput={(e: any) => setName(getEventValue(e))}
+              />
+              <dl-input
+                placeholder="Season name (e.g. Season 50 CA)"
+                value={seasonName}
+                required
+                onInput={(e: any) => setSeasonName(getEventValue(e))}
+              />
+              <dl-button variant="primary" onClick={handleCreate}>Create League</dl-button>
+            </dl-stack>
+          </dl-card>
         </form>
       )}
 
       {leagues.length === 0 ? (
-        <p className="text-gray-500">No leagues yet. Create one to get started.</p>
+        <dl-text color="secondary">No leagues yet. Create one to get started.</dl-text>
       ) : (
-        <div className="flex flex-col gap-3">
+        <dl-stack gap="300">
           {leagues.map((league) => (
-            <button
+            <dl-card
               key={league.id}
+              interactive
               onClick={() => router.push(`/admin/league/${league.id}`)}
-              className="border rounded-lg p-4 text-left hover:bg-gray-50 transition-colors"
             >
-              <div className="font-semibold">{league.name}</div>
-              <div className="text-sm text-gray-500">{league.season_name}</div>
-              <div className="text-xs text-gray-400 mt-1">Code: <span className="font-mono font-bold">{league.code}</span></div>
-            </button>
+              <div className="cl-dlite-sem-font-heading cl-dlite-sem-text-400 cl-dlite-prim-font-semibold">{league.name}</div>
+              <dl-text size="300" color="secondary">{league.season_name}</dl-text>
+              <dl-text size="200" color="tertiary">
+                Code: <span className="cl-dlite-sem-font-mono cl-dlite-prim-font-bold">{league.code}</span>
+              </dl-text>
+            </dl-card>
           ))}
-        </div>
+        </dl-stack>
       )}
     </main>
   );

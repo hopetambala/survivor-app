@@ -87,57 +87,53 @@ export default function ScoreEpisode() {
   }
 
   if (!episode) {
-    return <main className="min-h-screen flex items-center justify-center"><p>Loading...</p></main>;
+    return <main className="page page--centered"><p>Loading...</p></main>;
   }
 
   return (
-    <main className="min-h-screen p-4 max-w-full mx-auto">
-      <button
-        onClick={() => router.push(`/admin/league/${leagueId}/episodes`)}
-        className="text-sm text-gray-500 hover:text-gray-800 mb-4 inline-block"
-      >
+    <main className="page page--full">
+      <dl-button variant="ghost" size="sm" onClick={() => router.push(`/admin/league/${leagueId}/episodes`)}>
         &larr; Back to Episodes
-      </button>
+      </dl-button>
 
-      <div className="flex items-center justify-between mb-4">
+      <dl-cluster justify="between" gap="400">
         <div>
-          <h1 className="text-2xl font-bold">Score Episode {episode.episode_number}</h1>
-          {episode.title && <p className="text-gray-500">{episode.title}</p>}
+          <dl-heading level={1}>Score Episode {episode.episode_number}</dl-heading>
+          {episode.title && <dl-text color="secondary">{episode.title}</dl-text>}
         </div>
-        <button
+        <dl-button
+          variant="primary"
+          disabled={saving || undefined}
           onClick={handleSave}
-          disabled={saving}
-          className="bg-green-600 text-white rounded-lg px-6 py-2 font-medium hover:bg-green-700 disabled:opacity-50"
         >
           {saving ? "Saving..." : "Save Scores"}
-        </button>
-      </div>
+        </dl-button>
+      </dl-cluster>
 
-      <div className="flex items-center gap-4 mb-4">
-        <p className="text-sm text-gray-500">
-          Click cells to toggle events (1 = happened). For variable-point events (like idol saves), enter the number directly.
-        </p>
-        <label className="flex items-center gap-2 text-sm whitespace-nowrap">
+      <div className="cl-dlite-flex cl-dlite-items-center cl-dlite-sem-gap-400 cl-dlite-sem-mb-400">
+        <dl-text size="300" color="secondary">
+          Click cells to toggle events (1 = happened). For variable-point events, enter the number directly.
+        </dl-text>
+        <label className="cl-dlite-flex cl-dlite-items-center cl-dlite-sem-gap-200 cl-dlite-sem-text-300 cl-dlite-whitespace-nowrap">
           <input
             type="checkbox"
             checked={isFinalEpisode}
             onChange={(e) => setIsFinalEpisode(e.target.checked)}
-            className="rounded"
           />
           Final episode?
         </label>
       </div>
 
-      <div className="overflow-x-auto">
-        <table className="text-sm border-collapse min-w-full">
+      <div className="cl-dlite-overflow-x-auto">
+        <table className="cl-dlite-table">
           <thead>
             <tr>
-              <th className="border p-2 bg-gray-50 text-left sticky left-0 z-10 min-w-48">Event</th>
-              <th className="border p-2 bg-gray-50 text-center w-12">Pts</th>
+              <th className="sticky-col" style={{ minWidth: "12rem" }}>Event</th>
+              <th className="cl-dlite-text-center" style={{ width: "3rem" }}>Pts</th>
               {survivors.map((s) => (
-                <th key={s.id} className="border p-2 bg-gray-50 text-center min-w-20">
-                  <div className="text-xs">{s.name}</div>
-                  {s.tribe && <div className="text-xs text-gray-400">{s.tribe}</div>}
+                <th key={s.id} className="cl-dlite-text-center" style={{ minWidth: "5rem" }}>
+                  <div className="cl-dlite-sem-text-200">{s.name}</div>
+                  {s.tribe && <div className="cl-dlite-sem-text-200 cl-dlite-sem-text-tertiary">{s.tribe}</div>}
                 </th>
               ))}
             </tr>
@@ -151,35 +147,32 @@ export default function ScoreEpisode() {
               return true;
             }).map((rule) => (
               <tr key={rule.id}>
-                <td className="border p-2 bg-white sticky left-0 z-10 text-xs">
+                <td className="sticky-col cl-dlite-sem-text-200">
                   {rule.event_name}
                   {rule.description && (
-                    <span className="text-gray-400 ml-1" title={rule.description}>ⓘ</span>
+                    <span className="cl-dlite-sem-text-tertiary cl-dlite-sem-ml-100" title={rule.description}>ⓘ</span>
                   )}
                 </td>
-                <td className="border p-2 text-center text-xs text-gray-500">
+                <td className="cl-dlite-text-center cl-dlite-sem-text-200 cl-dlite-sem-text-tertiary">
                   {rule.is_variable ? "var" : rule.points}
                 </td>
                 {survivors.map((s) => {
                   const val = getValue(s.id, rule.id);
                   return (
-                    <td key={s.id} className="border p-1 text-center">
+                    <td key={s.id} className="cl-dlite-text-center">
                       {rule.is_variable ? (
                         <input
                           type="number"
                           step="0.5"
                           value={val || ""}
                           onChange={(e) => setValue(s.id, rule.id, parseFloat(e.target.value) || 0)}
-                          className="w-12 text-center text-sm border rounded px-1 py-0.5"
+                          className="cl-dlite-input cl-dlite-text-center cl-dlite-sem-text-300"
+                          style={{ width: "3rem" }}
                         />
                       ) : (
                         <button
                           onClick={() => toggleValue(s.id, rule.id)}
-                          className={`w-8 h-8 rounded text-sm font-medium transition-colors ${
-                            val > 0
-                              ? "bg-blue-600 text-white"
-                              : "bg-gray-100 text-gray-400 hover:bg-gray-200"
-                          }`}
+                          className={`score-toggle ${val > 0 ? "score-toggle--on" : "score-toggle--off"}`}
                         >
                           {val > 0 ? "✓" : "·"}
                         </button>
@@ -190,9 +183,9 @@ export default function ScoreEpisode() {
               </tr>
             ))}
             {/* Totals row */}
-            <tr className="font-semibold bg-gray-50">
-              <td className="border p-2 sticky left-0 z-10 bg-gray-50">Total</td>
-              <td className="border p-2"></td>
+            <tr className="cl-dlite-sem-font-heading cl-dlite-prim-font-semibold">
+              <td className="sticky-col cl-dlite-sem-bg-sunken">Total</td>
+              <td className="cl-dlite-sem-bg-sunken"></td>
               {survivors.map((s) => {
                 const total = rules.reduce((sum, rule) => {
                   const val = getValue(s.id, rule.id);
@@ -200,7 +193,7 @@ export default function ScoreEpisode() {
                   return sum + (val > 0 ? rule.points : 0);
                 }, 0);
                 return (
-                  <td key={s.id} className="border p-2 text-center text-sm">
+                  <td key={s.id} className="cl-dlite-text-center cl-dlite-sem-text-300 cl-dlite-sem-bg-sunken">
                     {total !== 0 ? total : "—"}
                   </td>
                 );

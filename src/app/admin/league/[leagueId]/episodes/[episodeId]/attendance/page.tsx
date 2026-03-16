@@ -63,54 +63,55 @@ export default function AttendancePage() {
   }
 
   if (!episode) {
-    return <main className="min-h-screen flex items-center justify-center"><p>Loading...</p></main>;
+    return <main className="page page--centered"><p>Loading...</p></main>;
   }
 
   return (
-    <main className="min-h-screen p-4 max-w-lg mx-auto">
-      <button
-        onClick={() => router.push(`/admin/league/${leagueId}/episodes`)}
-        className="text-sm text-gray-500 hover:text-gray-800 mb-4 inline-block"
-      >
+    <main className="page" style={{ maxWidth: "32rem", marginInline: "auto" }}>
+      <dl-button variant="ghost" size="sm" onClick={() => router.push(`/admin/league/${leagueId}/episodes`)}>
         &larr; Back to Episodes
-      </button>
+      </dl-button>
 
-      <div className="flex items-center justify-between mb-4">
+      <dl-cluster justify="between" gap="400">
         <div>
-          <h1 className="text-2xl font-bold">Attendance</h1>
-          <p className="text-gray-500">Episode {episode.episode_number}{episode.title ? ` — ${episode.title}` : ""}</p>
+          <dl-heading level={1}>Attendance</dl-heading>
+          <dl-text color="secondary">Episode {episode.episode_number}{episode.title ? ` — ${episode.title}` : ""}</dl-text>
         </div>
-        <button
+        <dl-button
+          variant="primary"
+          disabled={saving || undefined}
           onClick={handleSave}
-          disabled={saving}
-          className="bg-green-600 text-white rounded-lg px-4 py-2 font-medium hover:bg-green-700 disabled:opacity-50"
         >
           {saving ? "Saving..." : "Save"}
-        </button>
-      </div>
+        </dl-button>
+      </dl-cluster>
 
-      <p className="text-sm text-gray-500 mb-4">
-        Tap to cycle: <span className="font-mono">0</span> → <span className="font-mono">0.5</span> (watched remotely) → <span className="font-mono">1</span> (attended) → <span className="font-mono">0</span>
-      </p>
+      <dl-text size="300" color="secondary">
+        Tap to cycle: <span className="cl-dlite-sem-font-mono">0</span> → <span className="cl-dlite-sem-font-mono">0.5</span> (watched remotely) → <span className="cl-dlite-sem-font-mono">1</span> (attended) → <span className="cl-dlite-sem-font-mono">0</span>
+      </dl-text>
 
-      <div className="flex flex-col gap-2">
-        {players.map((player) => {
-          const pts = attendance[player.id] ?? 0;
-          return (
-            <button
-              key={player.id}
-              onClick={() => cycleAttendance(player.id)}
-              className="border rounded-lg p-3 flex items-center justify-between hover:bg-gray-50 transition-colors"
-            >
-              <span className="font-medium">{player.name}</span>
-              <span className={`text-lg font-mono font-bold ${
-                pts === 1 ? "text-green-600" : pts === 0.5 ? "text-yellow-600" : "text-gray-300"
-              }`}>
-                {pts === 1 ? "1 ✓" : pts === 0.5 ? "0.5" : "0"}
-              </span>
-            </button>
-          );
-        })}
+      <div className="cl-dlite-sem-mt-400">
+        <dl-stack gap="200">
+          {players.map((player) => {
+            const pts = attendance[player.id] ?? 0;
+            return (
+              <dl-card
+                key={player.id}
+                interactive
+                onClick={() => cycleAttendance(player.id)}
+              >
+                <dl-cluster justify="between" gap="200">
+                  <span className="cl-dlite-sem-font-heading cl-dlite-prim-font-medium">{player.name}</span>
+                  <span className={`cl-dlite-sem-font-mono cl-dlite-prim-font-bold cl-dlite-sem-text-400 ${
+                    pts === 1 ? "cl-dlite-sem-text-success" : pts === 0.5 ? "cl-dlite-sem-text-warning" : "cl-dlite-sem-text-muted"
+                  }`}>
+                    {pts === 1 ? "1 ✓" : pts === 0.5 ? "0.5" : "0"}
+                  </span>
+                </dl-cluster>
+              </dl-card>
+            );
+          })}
+        </dl-stack>
       </div>
     </main>
   );

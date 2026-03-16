@@ -1,15 +1,17 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { createClient } from "../../../lib/supabase/client";
 import { calculatePlayerScores } from "../../../lib/scoring";
+import { getEventValue } from "../../../dlite-design-system/wc-helpers";
 import type { League, Survivor, Player, DraftPick, ScoringRule, Episode, EpisodeEvent, Attendance } from "../../../lib/supabase/types";
 
 type Tab = "leaderboard" | "rosters" | "episodes" | "survivors";
 
 export default function LeaguePublicView() {
   const { code } = useParams<{ code: string }>();
+  const router = useRouter();
   const [league, setLeague] = useState<League | null>(null);
   const [survivors, setSurvivors] = useState<Survivor[]>([]);
   const [players, setPlayers] = useState<Player[]>([]);
@@ -59,18 +61,20 @@ export default function LeaguePublicView() {
 
   if (notFound) {
     return (
-      <main className="min-h-screen flex items-center justify-center p-4">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold mb-2">League Not Found</h1>
-          <p className="text-gray-500">No league with code &quot;{code}&quot; exists.</p>
-          <a href="/" className="text-blue-600 underline mt-4 inline-block">Go back</a>
+      <main className="page page--centered">
+        <div className="cl-dlite-text-center">
+          <dl-heading level={1}>League Not Found</dl-heading>
+          <dl-text color="secondary">No league with code &quot;{code}&quot; exists.</dl-text>
+          <div className="cl-dlite-sem-mt-400">
+            <dl-button variant="ghost" size="sm" onClick={() => router.push("/")}>Go back</dl-button>
+          </div>
         </div>
       </main>
     );
   }
 
   if (!league) {
-    return <main className="min-h-screen flex items-center justify-center"><p>Loading...</p></main>;
+    return <main className="page page--centered"><p>Loading...</p></main>;
   }
 
   const scoredEpisodes = episodes.filter((e) => e.is_scored);
@@ -86,31 +90,25 @@ export default function LeaguePublicView() {
   ];
 
   return (
-    <main className="min-h-screen p-4 max-w-4xl mx-auto">
-      <div className="mb-4">
-        <a href="/" className="text-sm text-gray-500 hover:text-gray-800">&larr; Home</a>
+    <main className="page page--wide">
+      <div className="cl-dlite-sem-mb-400">
+        <dl-button variant="ghost" size="sm" onClick={() => router.push("/")}>&larr; Home</dl-button>
       </div>
 
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold">{league.name}</h1>
-        <p className="text-gray-500">{league.season_name}</p>
+      <div className="cl-dlite-sem-mb-600">
+        <dl-heading level={1}>{league.name}</dl-heading>
+        <dl-text color="secondary">{league.season_name}</dl-text>
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-1 mb-6 overflow-x-auto">
-        {tabs.map((tab) => (
-          <button
-            key={tab.key}
-            onClick={() => setActiveTab(tab.key)}
-            className={`px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-colors ${
-              activeTab === tab.key
-                ? "bg-blue-600 text-white"
-                : "bg-gray-100 text-gray-600 hover:bg-gray-200"
-            }`}
-          >
-            {tab.label}
-          </button>
-        ))}
+      <div className="cl-dlite-sem-mb-600">
+        <dl-tabs value={activeTab} onChange={(e: any) => setActiveTab(getEventValue(e) as Tab)}>
+          {tabs.map((tab) => (
+            <dl-tab key={tab.key} label={tab.label} value={tab.key}>
+              {/* Content rendered conditionally below */}
+            </dl-tab>
+          ))}
+        </dl-tabs>
       </div>
 
       {/* Leaderboard */}
@@ -148,29 +146,29 @@ export default function LeaguePublicView() {
 function LeaderboardView({ playerScores }: { playerScores: ReturnType<typeof calculatePlayerScores> }) {
   return (
     <div>
-      <h2 className="text-lg font-semibold mb-3">Standings</h2>
-      <div className="flex flex-col gap-2">
+      <dl-heading level={2}>Standings</dl-heading>
+      <dl-stack gap="200">
         {playerScores.map((ps, idx) => (
           <div
             key={ps.playerId}
-            className={`border rounded-lg p-3 flex items-center justify-between ${
-              idx === 0 ? "border-yellow-400 bg-yellow-50" : ""
+            className={`cl-dlite-card cl-dlite-sem-p-300 cl-dlite-flex cl-dlite-items-center cl-dlite-justify-between ${
+              idx === 0 ? "leader-card--gold" : ""
             }`}
           >
-            <div className="flex items-center gap-3">
-              <span className="text-lg font-bold text-gray-400 w-8">{idx + 1}</span>
+            <div className="cl-dlite-flex cl-dlite-items-center cl-dlite-sem-gap-300">
+              <span className="cl-dlite-sem-font-heading cl-dlite-sem-text-400 cl-dlite-prim-font-bold cl-dlite-sem-text-tertiary" style={{ width: "2rem" }}>{idx + 1}</span>
               <div>
-                <div className="font-semibold">{ps.playerName}</div>
-                <div className="text-xs text-gray-400">
+                <div className="cl-dlite-sem-font-heading cl-dlite-prim-font-semibold">{ps.playerName}</div>
+                <div className="cl-dlite-sem-text-200 cl-dlite-sem-text-tertiary">
                   Survivor: {ps.survivorScore} &middot; Attendance: {ps.attendanceScore}
                 </div>
               </div>
             </div>
-            <span className="text-xl font-bold">{ps.totalScore}</span>
+            <span className="cl-dlite-sem-font-heading cl-dlite-sem-text-500 cl-dlite-prim-font-bold">{ps.totalScore}</span>
           </div>
         ))}
-        {playerScores.length === 0 && <p className="text-gray-500">No scores yet.</p>}
-      </div>
+        {playerScores.length === 0 && <dl-text color="secondary">No scores yet.</dl-text>}
+      </dl-stack>
     </div>
   );
 }
@@ -188,8 +186,8 @@ function RostersView({
 
   return (
     <div>
-      <h2 className="text-lg font-semibold mb-3">Rosters</h2>
-      <div className="grid gap-4 sm:grid-cols-2">
+      <dl-heading level={2}>Rosters</dl-heading>
+      <div className="grid-2">
         {players.map((player) => {
           const picks = draftPicks
             .filter((dp) => dp.player_id === player.id)
@@ -197,24 +195,26 @@ function RostersView({
             .filter(Boolean);
 
           return (
-            <div key={player.id} className="border rounded-lg p-4">
-              <h3 className="font-semibold mb-2">{player.name}</h3>
+            <div key={player.id} className="cl-dlite-card cl-dlite-sem-p-400">
+              <span className="cl-dlite-sem-font-heading cl-dlite-prim-font-semibold cl-dlite-sem-mb-200 cl-dlite-block">{player.name}</span>
               {picks.length === 0 ? (
-                <p className="text-gray-400 text-sm">No picks yet</p>
+                <dl-text size="300" color="tertiary">No picks yet</dl-text>
               ) : (
-                <div className="flex flex-col gap-1">
+                <dl-stack gap="100">
                   {picks.map((s) => (
-                    <div key={s!.id} className="flex items-center justify-between text-sm">
-                      <span className={s!.status === "eliminated" ? "line-through text-gray-400" : ""}>
+                    <div key={s!.id} className="cl-dlite-flex cl-dlite-items-center cl-dlite-justify-between cl-dlite-sem-text-300">
+                      <span className={s!.status === "eliminated" ? "cl-dlite-line-through cl-dlite-sem-text-tertiary" : ""}>
                         {s!.name}
                       </span>
-                      {s!.tribe && <span className="text-xs text-gray-400">{s!.tribe}</span>}
-                      {s!.status === "eliminated" && (
-                        <span className="text-xs bg-red-100 text-red-600 px-1.5 py-0.5 rounded">out</span>
-                      )}
+                      <div className="cl-dlite-flex cl-dlite-items-center cl-dlite-sem-gap-200">
+                        {s!.tribe && <span className="cl-dlite-sem-text-200 cl-dlite-sem-text-tertiary">{s!.tribe}</span>}
+                        {s!.status === "eliminated" && (
+                          <span className="cl-dlite-badge cl-dlite-badge-danger">out</span>
+                        )}
+                      </div>
                     </div>
                   ))}
-                </div>
+                </dl-stack>
               )}
             </div>
           );
@@ -247,33 +247,33 @@ function EpisodesView({
 
   return (
     <div>
-      <h2 className="text-lg font-semibold mb-3">Episode Breakdown</h2>
+      <dl-heading level={2}>Episode Breakdown</dl-heading>
 
       {/* Summary table */}
-      <div className="overflow-x-auto mb-6">
-        <table className="text-sm border-collapse w-full">
+      <div className="cl-dlite-overflow-x-auto cl-dlite-sem-mb-600">
+        <table className="cl-dlite-table">
           <thead>
             <tr>
-              <th className="border p-2 bg-gray-50 text-left">Player</th>
+              <th className="cl-dlite-text-left">Player</th>
               {episodes.map((ep) => (
-                <th key={ep.id} className="border p-2 bg-gray-50 text-center">Ep {ep.episode_number}</th>
+                <th key={ep.id} className="cl-dlite-text-center">Ep {ep.episode_number}</th>
               ))}
-              <th className="border p-2 bg-gray-50 text-center font-bold">Total</th>
+              <th className="cl-dlite-text-center cl-dlite-prim-font-bold">Total</th>
             </tr>
           </thead>
           <tbody>
             {playerScores.map((ps) => (
               <tr key={ps.playerId}>
-                <td className="border p-2 font-medium whitespace-nowrap">{ps.playerName}</td>
+                <td className="cl-dlite-sem-font-heading cl-dlite-prim-font-medium cl-dlite-whitespace-nowrap">{ps.playerName}</td>
                 {episodes.map((ep) => {
                   const epScore = ps.episodeScores.find((es) => es.episode === ep.episode_number);
                   return (
-                    <td key={ep.id} className="border p-2 text-center">
+                    <td key={ep.id} className="cl-dlite-text-center">
                       {epScore?.total ?? "—"}
                     </td>
                   );
                 })}
-                <td className="border p-2 text-center font-bold">{ps.totalScore}</td>
+                <td className="cl-dlite-text-center cl-dlite-prim-font-bold">{ps.totalScore}</td>
               </tr>
             ))}
           </tbody>
@@ -281,16 +281,16 @@ function EpisodesView({
       </div>
 
       {/* Expandable episode details */}
-      <div className="flex flex-col gap-2">
+      <dl-stack gap="200">
         {episodes.map((ep) => (
-          <div key={ep.id} className="border rounded-lg">
+          <div key={ep.id} className="cl-dlite-card" style={{ padding: 0 }}>
             <button
               onClick={() => setExpandedEp(expandedEp === ep.id ? null : ep.id)}
-              className="w-full p-3 flex items-center justify-between hover:bg-gray-50"
+              className="cl-dlite-w-full cl-dlite-sem-p-300 cl-dlite-flex cl-dlite-items-center cl-dlite-justify-between cl-dlite-cursor-pointer cl-dlite-sem-transition-colors"
             >
-              <span className="font-semibold">
+              <span className="cl-dlite-sem-font-heading cl-dlite-prim-font-semibold">
                 Episode {ep.episode_number}
-                {ep.title && <span className="text-gray-500 font-normal ml-2">{ep.title}</span>}
+                {ep.title && <span className="cl-dlite-sem-text-secondary cl-dlite-prim-font-normal cl-dlite-sem-ml-200">{ep.title}</span>}
               </span>
               <span>{expandedEp === ep.id ? "▲" : "▼"}</span>
             </button>
@@ -304,8 +304,8 @@ function EpisodesView({
             )}
           </div>
         ))}
-        {episodes.length === 0 && <p className="text-gray-500">No scored episodes yet.</p>}
-      </div>
+        {episodes.length === 0 && <dl-text color="secondary">No scored episodes yet.</dl-text>}
+      </dl-stack>
     </div>
   );
 }
@@ -327,17 +327,17 @@ function EpisodeDetail({
   const rulesMap = new Map(rules.map((r) => [r.id, r]));
 
   return (
-    <div className="p-3 pt-0 overflow-x-auto">
-      <table className="text-xs border-collapse w-full">
+    <div className="cl-dlite-sem-p-300 cl-dlite-overflow-x-auto" style={{ paddingTop: 0 }}>
+      <table className="cl-dlite-table">
         <thead>
           <tr>
-            <th className="border p-1 bg-gray-50 text-left">Survivor</th>
+            <th className="cl-dlite-text-left">Survivor</th>
             {rules.map((r) => (
-              <th key={r.id} className="border p-1 bg-gray-50 text-center" title={r.description || ""}>
+              <th key={r.id} className="cl-dlite-text-center" title={r.description || ""}>
                 {r.event_name.substring(0, 15)}
               </th>
             ))}
-            <th className="border p-1 bg-gray-50 text-center font-bold">Total</th>
+            <th className="cl-dlite-text-center cl-dlite-prim-font-bold">Total</th>
           </tr>
         </thead>
         <tbody>
@@ -351,16 +351,16 @@ function EpisodeDetail({
 
             return (
               <tr key={s.id}>
-                <td className="border p-1 font-medium whitespace-nowrap">{s.name}</td>
+                <td className="cl-dlite-sem-font-heading cl-dlite-prim-font-medium cl-dlite-whitespace-nowrap">{s.name}</td>
                 {rules.map((r) => {
                   const ev = survivorEvents.find((e) => e.scoring_rule_id === r.id);
                   return (
-                    <td key={r.id} className="border p-1 text-center">
+                    <td key={r.id} className="cl-dlite-text-center">
                       {ev && ev.value !== 0 ? ev.value : "—"}
                     </td>
                   );
                 })}
-                <td className="border p-1 text-center font-bold">{total}</td>
+                <td className="cl-dlite-text-center cl-dlite-prim-font-bold">{total}</td>
               </tr>
             );
           })}
@@ -376,27 +376,27 @@ function SurvivorsView({ survivors }: { survivors: Survivor[] }) {
 
   return (
     <div>
-      <h2 className="text-lg font-semibold mb-3">Survivors</h2>
+      <dl-heading level={2}>Survivors</dl-heading>
 
-      <h3 className="font-medium text-green-700 mb-2">Still In ({active.length})</h3>
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 mb-6">
+      <span className="cl-dlite-sem-font-heading cl-dlite-prim-font-medium cl-dlite-sem-text-success cl-dlite-sem-mb-200 cl-dlite-block">Still In ({active.length})</span>
+      <div className="grid-responsive cl-dlite-sem-mb-600">
         {active.map((s) => (
-          <div key={s.id} className="border rounded-lg p-2 text-sm">
-            <div className="font-medium">{s.name}</div>
-            {s.tribe && <div className="text-xs text-gray-400">{s.tribe}</div>}
+          <div key={s.id} className="cl-dlite-card cl-dlite-sem-p-200 cl-dlite-sem-text-300">
+            <div className="cl-dlite-sem-font-heading cl-dlite-prim-font-medium">{s.name}</div>
+            {s.tribe && <div className="cl-dlite-sem-text-200 cl-dlite-sem-text-tertiary">{s.tribe}</div>}
           </div>
         ))}
       </div>
 
       {eliminated.length > 0 && (
         <>
-          <h3 className="font-medium text-red-700 mb-2">Eliminated ({eliminated.length})</h3>
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
+          <span className="cl-dlite-sem-font-heading cl-dlite-prim-font-medium cl-dlite-sem-text-danger cl-dlite-sem-mb-200 cl-dlite-block">Eliminated ({eliminated.length})</span>
+          <div className="grid-responsive">
             {eliminated.map((s) => (
-              <div key={s.id} className="border rounded-lg p-2 text-sm bg-gray-50 opacity-60">
-                <div className="font-medium line-through">{s.name}</div>
-                {s.tribe && <div className="text-xs text-gray-400">{s.tribe}</div>}
-                {s.eliminated_episode && <div className="text-xs text-red-400">Ep {s.eliminated_episode}</div>}
+              <div key={s.id} className="cl-dlite-card cl-dlite-sem-p-200 cl-dlite-sem-text-300 cl-dlite-sem-bg-sunken" style={{ opacity: 0.6 }}>
+                <div className="cl-dlite-sem-font-heading cl-dlite-prim-font-medium cl-dlite-line-through">{s.name}</div>
+                {s.tribe && <div className="cl-dlite-sem-text-200 cl-dlite-sem-text-tertiary">{s.tribe}</div>}
+                {s.eliminated_episode && <div className="cl-dlite-sem-text-200 cl-dlite-sem-text-danger">Ep {s.eliminated_episode}</div>}
               </div>
             ))}
           </div>

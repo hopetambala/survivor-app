@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "../../lib/supabase/client";
+import { getEventValue } from "../../dlite-design-system/wc-helpers";
 
 export default function AdminAuth() {
   const [email, setEmail] = useState("");
@@ -39,51 +40,52 @@ export default function AdminAuth() {
   }
 
   return (
-    <main className="min-h-screen flex flex-col items-center justify-center p-4">
-      <div className="w-full max-w-sm">
-        <h1 className="text-2xl font-bold mb-6 text-center">
-          Commissioner {isSignUp ? "Sign Up" : "Login"}
-        </h1>
+    <main className="page page--centered">
+      <div className="cl-dlite-w-full" style={{ maxWidth: "24rem" }}>
+        <div className="cl-dlite-text-center cl-dlite-sem-mb-600">
+          <dl-heading level={1}>
+            Commissioner {isSignUp ? "Sign Up" : "Login"}
+          </dl-heading>
+        </div>
 
-        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="Email"
-            required
-            className="border rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            placeholder="Password"
-            required
-            minLength={6}
-            className="border rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-          {error && <p className="text-red-600 text-sm">{error}</p>}
-          <button
-            type="submit"
-            disabled={loading}
-            className="bg-blue-600 text-white rounded-lg px-4 py-3 font-medium disabled:opacity-50 hover:bg-blue-700 transition-colors"
-          >
-            {loading ? "..." : isSignUp ? "Sign Up" : "Sign In"}
-          </button>
+        <form onSubmit={handleSubmit}>
+          <dl-stack gap="400">
+            <dl-input
+              type="email"
+              placeholder="Email"
+              value={email}
+              required
+              onInput={(e: any) => setEmail(getEventValue(e))}
+            />
+            <dl-input
+              type="password"
+              placeholder="Password"
+              value={password}
+              required
+              onInput={(e: any) => setPassword(getEventValue(e))}
+            />
+            {error && <dl-text size="300" color="tertiary">{error}</dl-text>}
+            <dl-button
+              variant="primary"
+              full-width
+              disabled={loading || undefined}
+              onClick={handleSubmit}
+            >
+              {loading ? "..." : isSignUp ? "Sign Up" : "Sign In"}
+            </dl-button>
+          </dl-stack>
         </form>
 
-        <button
-          onClick={() => { setIsSignUp(!isSignUp); setError(""); }}
-          className="mt-4 text-sm text-gray-500 hover:text-gray-800 underline w-full text-center"
-        >
-          {isSignUp ? "Already have an account? Sign in" : "Need an account? Sign up"}
-        </button>
+        <div className="cl-dlite-text-center cl-dlite-sem-mt-400">
+          <dl-button variant="ghost" size="sm" onClick={() => { setIsSignUp(!isSignUp); setError(""); }}>
+            {isSignUp ? "Already have an account? Sign in" : "Need an account? Sign up"}
+          </dl-button>
+        </div>
 
-        <div className="mt-6 text-center">
-          <button onClick={() => router.push("/")} className="text-sm text-gray-400 hover:text-gray-600">
+        <div className="cl-dlite-text-center cl-dlite-sem-mt-600">
+          <dl-button variant="ghost" size="sm" onClick={() => router.push("/")}>
             &larr; Back
-          </button>
+          </dl-button>
         </div>
       </div>
     </main>
