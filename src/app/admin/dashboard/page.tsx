@@ -79,7 +79,7 @@ export default function AdminDashboard() {
   }
 
   if (loading) {
-    return <main className="page page--centered"><dl-spinner></dl-spinner></main>;
+    return <main className="page page--centered"><dl-spinner size="md"></dl-spinner></main>;
   }
 
   return (

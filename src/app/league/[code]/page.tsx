@@ -74,7 +74,7 @@ export default function LeaguePublicView() {
   }
 
   if (!league) {
-    return <main className="page page--centered"><dl-spinner></dl-spinner></main>;
+    return <main className="page page--centered"><dl-spinner size="md"></dl-spinner></main>;
   }
 
   const scoredEpisodes = episodes.filter((e) => e.is_scored);
