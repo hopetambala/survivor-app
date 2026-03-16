@@ -209,7 +209,7 @@ function RostersView({
                       <div className="cl-dlite-flex cl-dlite-items-center cl-dlite-sem-gap-200">
                         {s!.tribe && <span className="cl-dlite-sem-text-200 cl-dlite-sem-text-tertiary">{s!.tribe}</span>}
                         {s!.status === "eliminated" && (
-                          <span className="cl-dlite-badge cl-dlite-badge-danger">out</span>
+                          <dl-badge variant="danger">out</dl-badge>
                         )}
                       </div>
                     </div>
@@ -251,7 +251,8 @@ function EpisodesView({
 
       {/* Summary table */}
       <div className="cl-dlite-overflow-x-auto cl-dlite-sem-mb-600">
-        <table className="cl-dlite-table">
+        <dl-table>
+          <table>
           <thead>
             <tr>
               <th className="cl-dlite-text-left">Player</th>
@@ -278,6 +279,7 @@ function EpisodesView({
             ))}
           </tbody>
         </table>
+        </dl-table>
       </div>
 
       {/* Expandable episode details */}
@@ -328,7 +330,8 @@ function EpisodeDetail({
 
   return (
     <div className="cl-dlite-sem-p-300 cl-dlite-overflow-x-auto" style={{ paddingTop: 0 }}>
-      <table className="cl-dlite-table">
+      <dl-table>
+        <table>
         <thead>
           <tr>
             <th className="cl-dlite-text-left">Survivor</th>
@@ -366,6 +369,7 @@ function EpisodeDetail({
           })}
         </tbody>
       </table>
+      </dl-table>
     </div>
   );
 }

@@ -87,12 +87,10 @@ export default function ScoringRulesPage() {
                 {rule.description && <div className="cl-dlite-sem-text-200 cl-dlite-sem-text-tertiary">{rule.description}</div>}
               </div>
               <div className="cl-dlite-flex cl-dlite-items-center cl-dlite-sem-gap-200">
-                <input
+                <dl-input
                   type="number"
-                  step="0.25"
-                  defaultValue={rule.points}
-                  onBlur={(e) => handleUpdate(rule, "points", parseFloat(e.target.value) || 0)}
-                  className="cl-dlite-input cl-dlite-text-center cl-dlite-sem-text-300"
+                  value={String(rule.points)}
+                  onBlur={(e: any) => handleUpdate(rule, "points", parseFloat(getEventValue(e)) || 0)}
                   style={{ width: "4rem" }}
                 />
                 <span className="cl-dlite-sem-text-200 cl-dlite-sem-text-tertiary">{rule.is_variable ? "(var)" : "pts"}</span>
@@ -113,14 +111,12 @@ export default function ScoringRulesPage() {
             onInput={(e: any) => setName(getEventValue(e))}
           />
           <dl-cluster gap="200">
-            <input
+            <dl-input
               type="number"
-              step="0.25"
               value={points}
-              onChange={(e) => setPoints(e.target.value)}
+              onInput={(e: any) => setPoints(getEventValue(e))}
               placeholder="Points"
               required
-              className="cl-dlite-input cl-dlite-sem-text-300"
               style={{ width: "6rem" }}
             />
             <dl-checkbox checked={isVariable || undefined} onChange={() => setIsVariable(!isVariable)}>

@@ -167,7 +167,7 @@ export default function DraftPage() {
       {/* Draft Status */}
       {draftState?.status === "not_started" && (
         <div className="cl-dlite-card cl-dlite-sem-p-400 cl-dlite-sem-mt-600 cl-dlite-sem-mb-600 status-card--info">
-          <p className="cl-dlite-sem-mb-300">Ready to start the draft with {players.length} players and {survivors.length} survivors.</p>
+          <dl-text>Ready to start the draft with {players.length} players and {survivors.length} survivors.</dl-text>
           <dl-text size="300" color="secondary">
             Snake order: Round 1 goes 1→{players.length}, Round 2 goes {players.length}→1, etc.
           </dl-text>
@@ -181,7 +181,7 @@ export default function DraftPage() {
 
       {draftState?.status === "completed" && (
         <div className="cl-dlite-card cl-dlite-sem-p-400 cl-dlite-sem-mt-600 cl-dlite-sem-mb-600 status-card--success">
-          <p className="cl-dlite-sem-font-heading cl-dlite-prim-font-semibold cl-dlite-sem-text-success">Draft Complete! 🎉</p>
+          <dl-text weight="semibold">Draft Complete! 🎉</dl-text>
           <dl-text size="300" color="secondary">{totalPicksMade} picks made.</dl-text>
           <div className="cl-dlite-sem-mt-200">
             <dl-button variant="ghost" size="sm" onClick={resetDraft}>
@@ -196,9 +196,9 @@ export default function DraftPage() {
           <dl-text size="300" color="secondary">
             Round {draftState.current_round} &middot; Pick {totalPicksMade + 1} of {totalPicksNeeded}
           </dl-text>
-          <p className="cl-dlite-sem-font-heading cl-dlite-sem-text-400 cl-dlite-prim-font-bold cl-dlite-sem-mt-100">
+          <dl-text size="400" weight="bold">
             {currentPlayer?.name}&apos;s turn to pick
-          </p>
+          </dl-text>
           <div className="cl-dlite-flex cl-dlite-sem-gap-200 cl-dlite-sem-mt-300">
             <dl-button variant="ghost" size="sm" disabled={draftPicks.length === 0 || undefined} onClick={undoLastPick}>
               Undo Last Pick
@@ -216,7 +216,8 @@ export default function DraftPage() {
         <div className="cl-dlite-flex-1 cl-dlite-min-w-0">
           <span className="cl-dlite-sem-font-heading cl-dlite-prim-font-semibold cl-dlite-sem-mb-200 cl-dlite-block">Draft Board</span>
           <div className="cl-dlite-overflow-x-auto">
-            <table className="cl-dlite-table">
+            <dl-table>
+            <table>
               <thead>
                 <tr>
                   <th className="cl-dlite-text-left">Player</th>
@@ -245,6 +246,7 @@ export default function DraftPage() {
                 })}
               </tbody>
             </table>
+            </dl-table>
           </div>
         </div>
 
