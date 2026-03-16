@@ -54,14 +54,14 @@ export default function AdminAuth() {
               placeholder="Email"
               value={email}
               required
-              onInput={(e: any) => setEmail((e.target as any).value ?? "")}
+              onInput={(e: any) => setEmail(e.detail?.value ?? "")}
             />
             <dl-input
               type="password"
               placeholder="Password"
               value={password}
               required
-              onInput={(e: any) => setPassword((e.target as any).value ?? "")}
+              onInput={(e: any) => setPassword(e.detail?.value ?? "")}
             />
             {error && <dl-text size="300" color="tertiary">{error}</dl-text>}
             <dl-button

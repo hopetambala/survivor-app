@@ -99,16 +99,14 @@ export default function LeaguePublicView() {
       </div>
 
       {/* Tabs */}
-      <div className="tabs cl-dlite-sem-mb-600">
-        {tabs.map((tab) => (
-          <button
-            key={tab.key}
-            onClick={() => setActiveTab(tab.key)}
-            className={`tab ${activeTab === tab.key ? "tab--active" : "tab--inactive"}`}
-          >
-            {tab.label}
-          </button>
-        ))}
+      <div className="cl-dlite-sem-mb-600">
+        <dl-tabs value={activeTab} onChange={(e: any) => setActiveTab(e.detail.value)}>
+          {tabs.map((tab) => (
+            <dl-tab key={tab.key} label={tab.label} value={tab.key}>
+              {/* Content rendered conditionally below */}
+            </dl-tab>
+          ))}
+        </dl-tabs>
       </div>
 
       {/* Leaderboard */}

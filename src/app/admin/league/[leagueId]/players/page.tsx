@@ -83,13 +83,11 @@ export default function ManagePlayers() {
       <dl-heading level={1}>Players</dl-heading>
       <dl-text size="300" color="secondary">Add participants and set their draft order (drag to reorder).</dl-text>
 
-      <div className="cl-dlite-flex cl-dlite-sem-gap-200 cl-dlite-sem-mb-400 cl-dlite-sem-mt-400">
-        <button onClick={() => setShowBulk(false)} className={`tab ${!showBulk ? "tab--active" : "tab--inactive"}`}>
-          Add One
-        </button>
-        <button onClick={() => setShowBulk(true)} className={`tab ${showBulk ? "tab--active" : "tab--inactive"}`}>
-          Bulk Add
-        </button>
+      <div className="cl-dlite-sem-mb-400 cl-dlite-sem-mt-400">
+        <dl-tabs value={showBulk ? "bulk" : "one"} onChange={(e: any) => setShowBulk(e.detail.value === "bulk")}>
+          <dl-tab label="Add One" value="one"></dl-tab>
+          <dl-tab label="Bulk Add" value="bulk"></dl-tab>
+        </dl-tabs>
       </div>
 
       {showBulk ? (
@@ -99,7 +97,7 @@ export default function ManagePlayers() {
               placeholder="One name per line"
               rows={6}
               value={bulkNames}
-              onInput={(e: any) => setBulkNames((e.target as any).value ?? "")}
+              onInput={(e: any) => setBulkNames(e.detail?.value ?? "")}
             />
             <dl-button variant="primary" onClick={handleBulkAdd}>Add All</dl-button>
           </dl-stack>
@@ -112,7 +110,7 @@ export default function ManagePlayers() {
                 placeholder="Player name"
                 value={name}
                 required
-                onInput={(e: any) => setName((e.target as any).value ?? "")}
+                onInput={(e: any) => setName(e.detail?.value ?? "")}
               />
             </div>
             <dl-button variant="primary" onClick={handleAdd}>Add</dl-button>

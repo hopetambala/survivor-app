@@ -70,38 +70,6 @@
   .grid-responsive { grid-template-columns: repeat(4, 1fr); }
 }
 
-/* ===== TABS ===== */
-.tabs {
-  display: flex;
-  gap: var(--tk-dlite-semantic-spacing-100);
-  overflow-x: auto;
-}
-
-.tab {
-  padding: var(--tk-dlite-semantic-spacing-200) var(--tk-dlite-semantic-spacing-400);
-  border-radius: var(--tk-dlite-semantic-border-radius-md);
-  font-size: var(--tk-dlite-semantic-typography-type-body-small-size);
-  font-weight: 500;
-  white-space: nowrap;
-  transition: background-color 0.15s;
-  cursor: pointer;
-  border: none;
-}
-
-.tab--active {
-  background-color: var(--tk-dlite-semantic-color-action-primary);
-  color: var(--tk-dlite-semantic-color-text-on-brand);
-}
-
-.tab--inactive {
-  background-color: var(--tk-dlite-semantic-color-surface-raised);
-  color: var(--tk-dlite-semantic-color-text-secondary);
-}
-
-.tab--inactive:hover {
-  background-color: var(--tk-dlite-semantic-color-muted);
-}
-
 /* ===== DRAFT-SPECIFIC ===== */
 .draft-pick--available { background-color: color-mix(in srgb, var(--tk-dlite-semantic-color-feedback-success) 8%, transparent); border-color: color-mix(in srgb, var(--tk-dlite-semantic-color-feedback-success) 30%, transparent); }
 .draft-pick--available:hover { background-color: color-mix(in srgb, var(--tk-dlite-semantic-color-feedback-success) 15%, transparent); }

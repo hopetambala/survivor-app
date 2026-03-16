@@ -54,7 +54,7 @@ export default function ManageEpisodes() {
             <dl-input
               placeholder="Episode title (optional)"
               value={title}
-              onInput={(e: any) => setTitle((e.target as any).value ?? "")}
+              onInput={(e: any) => setTitle(e.detail?.value ?? "")}
             />
           </div>
           <dl-button variant="primary" onClick={handleAdd}>+ Add Episode</dl-button>
