@@ -268,18 +268,20 @@ export default function DraftPage() {
                 }
                 const available = remaining > 0;
                 return (
-                  <button
+                  <dl-card
                     key={s.id}
+                    interactive
+                    disabled={!available || undefined}
+                    className={statusClass}
+                    padding="300"
                     onClick={() => available && makePick(s.id)}
-                    disabled={!available}
-                    className={`cl-dlite-card cl-dlite-text-left cl-dlite-sem-text-300 cl-dlite-sem-transition-colors ${statusClass}`}
                   >
                     <div className="cl-dlite-sem-font-heading cl-dlite-prim-font-medium">{s.name}</div>
                     <div className="cl-dlite-sem-text-200 cl-dlite-sem-text-tertiary">
                       {s.tribe && `${s.tribe} · `}
                       {count}/{maxDrafts} drafted
                     </div>
-                  </button>
+                  </dl-card>
                 );
               })}
             </div>

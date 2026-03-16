@@ -95,19 +95,20 @@ export default function AttendancePage() {
           {players.map((player) => {
             const pts = attendance[player.id] ?? 0;
             return (
-              <button
+              <dl-card
                 key={player.id}
+                interactive
                 onClick={() => cycleAttendance(player.id)}
-                className="cl-dlite-card cl-dlite-flex cl-dlite-items-center cl-dlite-justify-between cl-dlite-cursor-pointer cl-dlite-sem-transition-colors"
-                style={{ display: "flex" }}
               >
-                <span className="cl-dlite-sem-font-heading cl-dlite-prim-font-medium">{player.name}</span>
-                <span className={`cl-dlite-sem-font-mono cl-dlite-prim-font-bold cl-dlite-sem-text-400 ${
-                  pts === 1 ? "cl-dlite-sem-text-success" : pts === 0.5 ? "cl-dlite-sem-text-warning" : "cl-dlite-sem-text-muted"
-                }`}>
-                  {pts === 1 ? "1 ✓" : pts === 0.5 ? "0.5" : "0"}
-                </span>
-              </button>
+                <dl-cluster justify="between" gap="200">
+                  <span className="cl-dlite-sem-font-heading cl-dlite-prim-font-medium">{player.name}</span>
+                  <span className={`cl-dlite-sem-font-mono cl-dlite-prim-font-bold cl-dlite-sem-text-400 ${
+                    pts === 1 ? "cl-dlite-sem-text-success" : pts === 0.5 ? "cl-dlite-sem-text-warning" : "cl-dlite-sem-text-muted"
+                  }`}>
+                    {pts === 1 ? "1 ✓" : pts === 0.5 ? "0.5" : "0"}
+                  </span>
+                </dl-cluster>
+              </dl-card>
             );
           })}
         </dl-stack>

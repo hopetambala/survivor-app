@@ -72,11 +72,10 @@ export default function LeagueOverview() {
 
       <div className="grid-2">
         {navItems.map((item) => (
-          <button
+          <dl-card
             key={item.label}
+            interactive
             onClick={() => router.push(item.href)}
-            className="cl-dlite-card cl-dlite-text-left cl-dlite-cursor-pointer cl-dlite-sem-transition-colors"
-            style={{ display: "block", width: "100%" }}
           >
             <dl-cluster justify="between" gap="200">
               <span className="cl-dlite-sem-font-heading cl-dlite-prim-font-semibold">{item.label}</span>
@@ -94,7 +93,7 @@ export default function LeagueOverview() {
               )}
             </dl-cluster>
             <dl-text size="300" color="secondary">{item.desc}</dl-text>
-          </button>
+          </dl-card>
         ))}
       </div>
     </main>
