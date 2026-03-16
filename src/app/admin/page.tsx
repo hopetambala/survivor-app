@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "../../lib/supabase/client";
+import { getEventValue } from "../../dlite-design-system/wc-helpers";
 
 export default function AdminAuth() {
   const [email, setEmail] = useState("");
@@ -54,14 +55,14 @@ export default function AdminAuth() {
               placeholder="Email"
               value={email}
               required
-              onInput={(e: any) => setEmail(e.detail?.value ?? e.target?.value ?? "")}
+              onInput={(e: any) => setEmail(getEventValue(e))}
             />
             <dl-input
               type="password"
               placeholder="Password"
               value={password}
               required
-              onInput={(e: any) => setPassword(e.detail?.value ?? e.target?.value ?? "")}
+              onInput={(e: any) => setPassword(getEventValue(e))}
             />
             {error && <dl-text size="300" color="tertiary">{error}</dl-text>}
             <dl-button

@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { createClient } from "../../../../../lib/supabase/client";
+import { getEventValue } from "../../../../../dlite-design-system/wc-helpers";
 import type { Survivor } from "../../../../../lib/supabase/types";
 
 export default function ManageSurvivors() {
@@ -91,7 +92,7 @@ export default function ManageSurvivors() {
               placeholder="One name per line"
               rows={6}
               value={bulkNames}
-              onInput={(e: any) => setBulkNames(e.detail?.value ?? e.target?.value ?? "")}
+              onInput={(e: any) => setBulkNames(getEventValue(e))}
             />
             <dl-button variant="primary" onClick={handleBulkAdd}>Add All</dl-button>
           </dl-stack>
@@ -104,14 +105,14 @@ export default function ManageSurvivors() {
                 placeholder="Survivor name"
                 value={name}
                 required
-                onInput={(e: any) => setName(e.detail?.value ?? e.target?.value ?? "")}
+                onInput={(e: any) => setName(getEventValue(e))}
               />
             </div>
             <div style={{ width: "7rem" }}>
               <dl-input
                 placeholder="Tribe"
                 value={tribe}
-                onInput={(e: any) => setTribe(e.detail?.value ?? e.target?.value ?? "")}
+                onInput={(e: any) => setTribe(getEventValue(e))}
               />
             </div>
             <dl-button variant="primary" onClick={handleAdd}>Add</dl-button>
@@ -138,7 +139,7 @@ export default function ManageSurvivors() {
                   placeholder="tribe"
                   value={s.tribe || ""}
                   style={{ width: "5rem", fontSize: "0.75rem" }}
-                  onChange={(e: any) => handleTribeUpdate(s.id, e.detail?.value ?? e.target?.value ?? "")}
+                  onChange={(e: any) => handleTribeUpdate(s.id, getEventValue(e))}
                 />
                 <dl-badge variant={s.status === "active" ? "success" : "danger"}>
                   {s.status}

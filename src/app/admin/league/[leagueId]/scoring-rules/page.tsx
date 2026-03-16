@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { createClient } from "../../../../../lib/supabase/client";
+import { getEventValue } from "../../../../../dlite-design-system/wc-helpers";
 import { DEFAULT_SCORING_RULES } from "../../../../../lib/scoring";
 import type { ScoringRule } from "../../../../../lib/supabase/types";
 
@@ -109,7 +110,7 @@ export default function ScoringRulesPage() {
             placeholder="Event name"
             value={name}
             required
-            onInput={(e: any) => setName(e.detail?.value ?? e.target?.value ?? "")}
+            onInput={(e: any) => setName(getEventValue(e))}
           />
           <dl-cluster gap="200">
             <input
@@ -130,7 +131,7 @@ export default function ScoringRulesPage() {
           <dl-input
             placeholder="Description (optional)"
             value={description}
-            onInput={(e: any) => setDescription(e.detail?.value ?? e.target?.value ?? "")}
+            onInput={(e: any) => setDescription(getEventValue(e))}
           />
           <dl-button variant="primary" onClick={handleAdd}>Add Rule</dl-button>
         </dl-stack>

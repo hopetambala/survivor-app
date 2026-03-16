@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "../../../lib/supabase/client";
 import { generateLeagueCode, DEFAULT_SCORING_RULES } from "../../../lib/scoring";
+import { getEventValue } from "../../../dlite-design-system/wc-helpers";
 import type { League } from "../../../lib/supabase/types";
 
 export default function AdminDashboard() {
@@ -104,13 +105,13 @@ export default function AdminDashboard() {
                 placeholder="League name (e.g. Fantasy Survivor)"
                 value={name}
                 required
-                onInput={(e: any) => setName(e.detail?.value ?? e.target?.value ?? "")}
+                onInput={(e: any) => setName(getEventValue(e))}
               />
               <dl-input
                 placeholder="Season name (e.g. Season 50 CA)"
                 value={seasonName}
                 required
-                onInput={(e: any) => setSeasonName(e.detail?.value ?? e.target?.value ?? "")}
+                onInput={(e: any) => setSeasonName(getEventValue(e))}
               />
               <dl-button variant="primary" onClick={handleCreate}>Create League</dl-button>
             </dl-stack>

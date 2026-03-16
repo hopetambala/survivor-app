@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { getEventValue } from "../dlite-design-system/wc-helpers";
 
 export default function Home() {
   const [code, setCode] = useState("");
@@ -29,7 +30,7 @@ export default function Home() {
           value={code}
           style={{ textAlign: "center", fontSize: "1.5rem", letterSpacing: "0.1em" }}
           onInput={(e: any) => {
-            const val = (e.detail?.value ?? e.target?.value ?? "").replace(/\D/g, "");
+            const val = getEventValue(e).replace(/\D/g, "");
             setCode(val.slice(0, 4));
           }}
         />

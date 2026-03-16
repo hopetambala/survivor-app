@@ -4,6 +4,7 @@ import { useEffect, useState, useCallback } from "react";
 import { useParams } from "next/navigation";
 import { createClient } from "../../../lib/supabase/client";
 import { calculatePlayerScores } from "../../../lib/scoring";
+import { getEventValue } from "../../../dlite-design-system/wc-helpers";
 import type { League, Survivor, Player, DraftPick, ScoringRule, Episode, EpisodeEvent, Attendance } from "../../../lib/supabase/types";
 
 type Tab = "leaderboard" | "rosters" | "episodes" | "survivors";
@@ -100,7 +101,7 @@ export default function LeaguePublicView() {
 
       {/* Tabs */}
       <div className="cl-dlite-sem-mb-600">
-        <dl-tabs value={activeTab} onChange={(e: any) => setActiveTab(e.detail.value)}>
+        <dl-tabs value={activeTab} onChange={(e: any) => setActiveTab(getEventValue(e) as Tab)}>
           {tabs.map((tab) => (
             <dl-tab key={tab.key} label={tab.label} value={tab.key}>
               {/* Content rendered conditionally below */}

@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { createClient } from "../../../../../lib/supabase/client";
+import { getEventValue } from "../../../../../dlite-design-system/wc-helpers";
 import type { Episode } from "../../../../../lib/supabase/types";
 
 export default function ManageEpisodes() {
@@ -54,7 +55,7 @@ export default function ManageEpisodes() {
             <dl-input
               placeholder="Episode title (optional)"
               value={title}
-              onInput={(e: any) => setTitle(e.detail?.value ?? e.target?.value ?? "")}
+              onInput={(e: any) => setTitle(getEventValue(e))}
             />
           </div>
           <dl-button variant="primary" onClick={handleAdd}>+ Add Episode</dl-button>

@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { createClient } from "../../../../../lib/supabase/client";
+import { getEventValue } from "../../../../../dlite-design-system/wc-helpers";
 import type { Player } from "../../../../../lib/supabase/types";
 
 export default function ManagePlayers() {
@@ -97,7 +98,7 @@ export default function ManagePlayers() {
               placeholder="One name per line"
               rows={6}
               value={bulkNames}
-              onInput={(e: any) => setBulkNames(e.detail?.value ?? e.target?.value ?? "")}
+              onInput={(e: any) => setBulkNames(getEventValue(e))}
             />
             <dl-button variant="primary" onClick={handleBulkAdd}>Add All</dl-button>
           </dl-stack>
@@ -110,7 +111,7 @@ export default function ManagePlayers() {
                 placeholder="Player name"
                 value={name}
                 required
-                onInput={(e: any) => setName(e.detail?.value ?? e.target?.value ?? "")}
+                onInput={(e: any) => setName(getEventValue(e))}
               />
             </div>
             <dl-button variant="primary" onClick={handleAdd}>Add</dl-button>
