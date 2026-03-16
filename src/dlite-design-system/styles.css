@@ -1,0 +1,210 @@
+/* survivor-app design system styles
+ * App-specific compositions only — uses:
+ *   - <dl-*> web components from web-components-dlite
+ *   - .cl-dlite-* CSS classes from style-dictionary-dlite-tokens
+ *   - --tk-dlite-* CSS custom properties from style-dictionary-dlite-tokens
+ *
+ * Only define styles here that are NOT provided by the token package or web components.
+ */
+
+/* ===== PAGE LAYOUTS ===== */
+.page {
+  min-height: 100vh;
+  padding: var(--tk-dlite-semantic-spacing-400);
+}
+
+.page--centered {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.page--narrow {
+  max-width: 42rem;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.page--wide {
+  max-width: 56rem;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.page--full {
+  max-width: none;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* ===== GRID ===== */
+.grid-2 {
+  display: grid;
+  gap: var(--tk-dlite-semantic-spacing-300);
+}
+
+@media (min-width: 640px) {
+  .grid-2 { grid-template-columns: repeat(2, 1fr); }
+}
+
+.grid-responsive {
+  display: grid;
+  gap: var(--tk-dlite-semantic-spacing-200);
+  grid-template-columns: repeat(2, 1fr);
+}
+
+@media (min-width: 640px) {
+  .grid-responsive { grid-template-columns: repeat(3, 1fr); }
+}
+
+@media (min-width: 768px) {
+  .grid-responsive { grid-template-columns: repeat(4, 1fr); }
+}
+
+/* ===== TABS ===== */
+.tabs {
+  display: flex;
+  gap: var(--tk-dlite-semantic-spacing-100);
+  overflow-x: auto;
+}
+
+.tab {
+  padding: var(--tk-dlite-semantic-spacing-200) var(--tk-dlite-semantic-spacing-400);
+  border-radius: var(--tk-dlite-semantic-border-radius-md);
+  font-size: var(--tk-dlite-semantic-typography-type-body-small-size);
+  font-weight: 500;
+  white-space: nowrap;
+  transition: background-color 0.15s;
+  cursor: pointer;
+  border: none;
+}
+
+.tab--active {
+  background-color: var(--tk-dlite-semantic-color-action-primary);
+  color: var(--tk-dlite-semantic-color-text-on-brand);
+}
+
+.tab--inactive {
+  background-color: var(--tk-dlite-semantic-color-surface-raised);
+  color: var(--tk-dlite-semantic-color-text-secondary);
+}
+
+.tab--inactive:hover {
+  background-color: var(--tk-dlite-semantic-color-muted);
+}
+
+/* ===== DRAFT-SPECIFIC ===== */
+.draft-pick--available { background-color: color-mix(in srgb, var(--tk-dlite-semantic-color-feedback-success) 8%, transparent); border-color: color-mix(in srgb, var(--tk-dlite-semantic-color-feedback-success) 30%, transparent); }
+.draft-pick--available:hover { background-color: color-mix(in srgb, var(--tk-dlite-semantic-color-feedback-success) 15%, transparent); }
+.draft-pick--limited { background-color: color-mix(in srgb, var(--tk-dlite-semantic-color-feedback-warning) 8%, transparent); border-color: color-mix(in srgb, var(--tk-dlite-semantic-color-feedback-warning) 30%, transparent); }
+.draft-pick--limited:hover { background-color: color-mix(in srgb, var(--tk-dlite-semantic-color-feedback-warning) 15%, transparent); }
+.draft-pick--taken { background-color: color-mix(in srgb, var(--tk-dlite-semantic-color-feedback-danger) 8%, transparent); border-color: color-mix(in srgb, var(--tk-dlite-semantic-color-feedback-danger) 30%, transparent); opacity: 0.6; cursor: not-allowed; }
+.draft-pick--drafted { background-color: color-mix(in srgb, var(--tk-dlite-semantic-color-action-primary) 8%, transparent); border-color: color-mix(in srgb, var(--tk-dlite-semantic-color-action-primary) 30%, transparent); }
+.draft-pick--drafted:hover { background-color: color-mix(in srgb, var(--tk-dlite-semantic-color-action-primary) 15%, transparent); }
+
+/* ===== SCORE TOGGLE ===== */
+.score-toggle {
+  width: 2rem;
+  height: 2rem;
+  border-radius: var(--tk-dlite-semantic-border-radius-sm);
+  font-weight: 500;
+  transition: background-color 0.15s;
+  border: none;
+  cursor: pointer;
+}
+
+.score-toggle--on {
+  background-color: var(--tk-dlite-semantic-color-action-primary);
+  color: var(--tk-dlite-semantic-color-text-on-brand);
+}
+
+.score-toggle--off {
+  background-color: var(--tk-dlite-semantic-color-surface-raised);
+  color: var(--tk-dlite-semantic-color-text-tertiary);
+}
+
+.score-toggle--off:hover {
+  background-color: var(--tk-dlite-semantic-color-muted);
+}
+
+/* ===== LEADERBOARD ===== */
+.leader-card--gold {
+  border-color: var(--tk-dlite-semantic-color-feedback-warning);
+  background-color: color-mix(in srgb, var(--tk-dlite-semantic-color-feedback-warning) 8%, transparent);
+}
+
+/* ===== STICKY COL ===== */
+.sticky-col {
+  position: sticky;
+  left: 0;
+  z-index: 10;
+  background-color: var(--tk-dlite-semantic-color-surface-base);
+}
+
+/* ===== HIGHLIGHT ROW ===== */
+.row-highlight {
+  background-color: color-mix(in srgb, var(--tk-dlite-semantic-color-feedback-warning) 8%, transparent);
+}
+
+/* ===== RESPONSIVE FLEX ===== */
+.flex-col-lg-row {
+  display: flex;
+  flex-direction: column;
+}
+
+@media (min-width: 1024px) {
+  .flex-col-lg-row { flex-direction: row; }
+  .lg-w-72 { width: 18rem; flex-shrink: 0; }
+  .lg-max-h-70vh { max-height: 70vh; overflow-y: auto; }
+}
+
+/* ===== LINK-STYLE BUTTON (back nav, text links) ===== */
+.btn-link {
+  background: none;
+  color: var(--tk-dlite-semantic-color-text-secondary);
+  text-decoration: underline;
+  padding: 0;
+  cursor: pointer;
+  border: none;
+}
+
+.btn-link:hover {
+  color: var(--tk-dlite-semantic-color-text-primary);
+}
+
+.btn-back {
+  background: none;
+  color: var(--tk-dlite-semantic-color-text-secondary);
+  padding: 0;
+  font-size: var(--tk-dlite-semantic-typography-type-body-small-size);
+  margin-bottom: var(--tk-dlite-semantic-spacing-400);
+  display: inline-block;
+  cursor: pointer;
+  border: none;
+}
+
+.btn-back:hover {
+  color: var(--tk-dlite-semantic-color-text-primary);
+}
+
+/* ===== STATUS CARDS ===== */
+.status-card--info {
+  background-color: color-mix(in srgb, var(--tk-dlite-semantic-color-feedback-info) 8%, transparent);
+  border-color: color-mix(in srgb, var(--tk-dlite-semantic-color-feedback-info) 30%, transparent);
+}
+
+.status-card--success {
+  background-color: color-mix(in srgb, var(--tk-dlite-semantic-color-feedback-success) 8%, transparent);
+  border-color: color-mix(in srgb, var(--tk-dlite-semantic-color-feedback-success) 30%, transparent);
+}
+
+.status-card--warning {
+  background-color: color-mix(in srgb, var(--tk-dlite-semantic-color-feedback-warning) 8%, transparent);
+  border-color: color-mix(in srgb, var(--tk-dlite-semantic-color-feedback-warning) 30%, transparent);
+}
+
+.status-card--danger {
+  background-color: color-mix(in srgb, var(--tk-dlite-semantic-color-feedback-danger) 8%, transparent);
+  border-color: color-mix(in srgb, var(--tk-dlite-semantic-color-feedback-danger) 30%, transparent);
+}
