@@ -80,7 +80,7 @@ export default function LeagueOverview() {
             <dl-cluster justify="between" gap="200">
               <span className="cl-dlite-sem-font-heading cl-dlite-prim-font-semibold">{item.label}</span>
               {item.count !== undefined && (
-                <dl-badge>{item.count}</dl-badge>
+                <dl-badge variant="default">{item.count}</dl-badge>
               )}
               {item.status && (
                 <dl-badge variant={

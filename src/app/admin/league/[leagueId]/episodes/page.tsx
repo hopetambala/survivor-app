@@ -58,11 +58,11 @@ export default function ManageEpisodes() {
               onInput={(e: any) => setTitle(getEventValue(e))}
             />
           </div>
-          <dl-button variant="primary" onClick={handleAdd}>+ Add Episode</dl-button>
+          <dl-button variant="primary" size="md" onClick={handleAdd}>+ Add Episode</dl-button>
         </dl-cluster>
       </form>
 
-      <dl-stack gap="200">
+      <dl-stack direction="vertical" gap="200">
         {episodes.map((ep) => (
           <div key={ep.id} className="cl-dlite-card cl-dlite-sem-p-300">
             <dl-cluster justify="between" gap="200">

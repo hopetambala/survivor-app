@@ -49,7 +49,7 @@ export default function AdminAuth() {
         </div>
 
         <form onSubmit={handleSubmit}>
-          <dl-stack gap="400">
+          <dl-stack direction="vertical" gap="400">
             <dl-input
               type="email"
               placeholder="Email"
@@ -67,6 +67,7 @@ export default function AdminAuth() {
             {error && <dl-text size="300" color="tertiary">{error}</dl-text>}
             <dl-button
               variant="primary"
+              size="md"
               full-width
               disabled={loading || undefined}
               onClick={handleSubmit}

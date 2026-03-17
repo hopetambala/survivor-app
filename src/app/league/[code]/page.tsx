@@ -147,7 +147,7 @@ function LeaderboardView({ playerScores }: { playerScores: ReturnType<typeof cal
   return (
     <div>
       <dl-heading level={2}>Standings</dl-heading>
-      <dl-stack gap="200">
+      <dl-stack direction="vertical" gap="200">
         {playerScores.map((ps, idx) => (
           <div
             key={ps.playerId}
@@ -200,7 +200,7 @@ function RostersView({
               {picks.length === 0 ? (
                 <dl-text size="300" color="tertiary">No picks yet</dl-text>
               ) : (
-                <dl-stack gap="100">
+                <dl-stack direction="vertical" gap="100">
                   {picks.map((s) => (
                     <div key={s!.id} className="cl-dlite-flex cl-dlite-items-center cl-dlite-justify-between cl-dlite-sem-text-300">
                       <span className={s!.status === "eliminated" ? "cl-dlite-line-through cl-dlite-sem-text-tertiary" : ""}>
@@ -283,7 +283,7 @@ function EpisodesView({
       </div>
 
       {/* Expandable episode details */}
-      <dl-stack gap="200">
+      <dl-stack direction="vertical" gap="200">
         {episodes.map((ep) => (
           <div key={ep.id} className="cl-dlite-card" style={{ padding: 0 }}>
             <button

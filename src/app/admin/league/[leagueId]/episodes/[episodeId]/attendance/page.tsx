@@ -63,7 +63,7 @@ export default function AttendancePage() {
   }
 
   if (!episode) {
-    return <main className="page page--centered"><dl-spinner></dl-spinner></main>;
+    return <main className="page page--centered"><dl-spinner size="md"></dl-spinner></main>;
   }
 
   return (
@@ -79,6 +79,7 @@ export default function AttendancePage() {
         </div>
         <dl-button
           variant="primary"
+          size="md"
           disabled={saving || undefined}
           onClick={handleSave}
         >
@@ -91,7 +92,7 @@ export default function AttendancePage() {
       </dl-text>
 
       <div className="cl-dlite-sem-mt-400">
-        <dl-stack gap="200">
+        <dl-stack direction="vertical" gap="200">
           {players.map((player) => {
             const pts = attendance[player.id] ?? 0;
             return (

@@ -93,14 +93,14 @@ export default function ManagePlayers() {
 
       {showBulk ? (
         <form onSubmit={handleBulkAdd} className="cl-dlite-sem-mb-600">
-          <dl-stack gap="200">
+          <dl-stack direction="vertical" gap="200">
             <dl-textarea
               placeholder="One name per line"
               rows={6}
               value={bulkNames}
               onInput={(e: any) => setBulkNames(getEventValue(e))}
             />
-            <dl-button variant="primary" onClick={handleBulkAdd}>Add All</dl-button>
+            <dl-button variant="primary" size="md" onClick={handleBulkAdd}>Add All</dl-button>
           </dl-stack>
         </form>
       ) : (
@@ -114,14 +114,14 @@ export default function ManagePlayers() {
                 onInput={(e: any) => setName(getEventValue(e))}
               />
             </div>
-            <dl-button variant="primary" onClick={handleAdd}>Add</dl-button>
+            <dl-button variant="primary" size="md" onClick={handleAdd}>Add</dl-button>
           </dl-cluster>
         </form>
       )}
 
       <dl-text size="300" color="secondary">{players.length} players</dl-text>
 
-      <dl-stack gap="200">
+      <dl-stack direction="vertical" gap="200">
         {players.map((p, idx) => (
           <div key={p.id} className="cl-dlite-card cl-dlite-sem-p-300">
             <dl-cluster justify="between" gap="200">

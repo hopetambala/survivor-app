@@ -91,7 +91,7 @@ export default function LeagueSettings() {
       </div>
 
       <form onSubmit={handleSave}>
-        <dl-stack gap="600">
+        <dl-stack direction="vertical" gap="600">
           {/* Picks per player */}
           <div>
             <label className="cl-dlite-block cl-dlite-sem-font-heading cl-dlite-prim-font-medium cl-dlite-sem-mb-100">Picks per Player</label>
@@ -145,7 +145,7 @@ export default function LeagueSettings() {
             </div>
           </div>
 
-          <dl-button variant="primary" disabled={saving || undefined} onClick={handleSave}>
+          <dl-button variant="primary" size="md" disabled={saving || undefined} onClick={handleSave}>
             {saving ? "Saving…" : "Save Settings"}
           </dl-button>
           {saved && <dl-text size="300" color="secondary" style={{ color: "var(--tk-dlite-semantic-color-feedback-success)" }}>Settings saved!</dl-text>}

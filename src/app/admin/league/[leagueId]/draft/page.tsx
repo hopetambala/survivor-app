@@ -172,7 +172,7 @@ export default function DraftPage() {
             Snake order: Round 1 goes 1→{players.length}, Round 2 goes {players.length}→1, etc.
           </dl-text>
           <div className="cl-dlite-sem-mt-300">
-            <dl-button variant="primary" onClick={startDraft}>
+            <dl-button variant="primary" size="md" onClick={startDraft}>
               Start Draft
             </dl-button>
           </div>

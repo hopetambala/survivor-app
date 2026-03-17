@@ -78,7 +78,7 @@ export default function ScoringRulesPage() {
         </dl-button>
       </div>
 
-      <dl-stack gap="200">
+      <dl-stack direction="vertical" gap="200">
         {rules.map((rule) => (
           <div key={rule.id} className="cl-dlite-card cl-dlite-sem-p-300">
             <dl-cluster justify="between" gap="300">
@@ -103,7 +103,7 @@ export default function ScoringRulesPage() {
       </dl-stack>
 
       <form onSubmit={handleAdd} className="cl-dlite-card cl-dlite-sem-p-400 cl-dlite-sem-bg-sunken cl-dlite-sem-mt-600">
-        <dl-stack gap="300">
+        <dl-stack direction="vertical" gap="300">
           <span className="cl-dlite-sem-font-heading cl-dlite-prim-font-semibold cl-dlite-sem-text-300">Add Custom Rule</span>
           <dl-input
             placeholder="Event name"
@@ -130,7 +130,7 @@ export default function ScoringRulesPage() {
             value={description}
             onInput={(e: any) => setDescription(getEventValue(e))}
           />
-          <dl-button variant="primary" onClick={handleAdd}>Add Rule</dl-button>
+          <dl-button variant="primary" size="md" onClick={handleAdd}>Add Rule</dl-button>
         </dl-stack>
       </form>
     </main>

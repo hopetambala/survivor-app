@@ -103,6 +103,7 @@ export default function ScoreEpisode() {
         </div>
         <dl-button
           variant="primary"
+          size="md"
           disabled={saving || undefined}
           onClick={handleSave}
         >

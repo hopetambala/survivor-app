@@ -37,6 +37,7 @@ export default function Home() {
         <dl-button
           variant="primary"
           full-width
+          size="md"
           disabled={code.length !== 4 || undefined}
           onClick={handleJoin}
         >
@@ -45,7 +46,7 @@ export default function Home() {
       </form>
 
       <div style={{ maxWidth: "20rem" }} className="cl-dlite-w-full">
-        <dl-divider />
+        <dl-divider orientation="horizontal" />
         <div className="cl-dlite-text-center cl-dlite-sem-mt-400">
           <dl-button variant="ghost" size="sm" onClick={() => router.push("/admin")}>
             Commissioner Login

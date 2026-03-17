@@ -92,7 +92,7 @@ export default function AdminDashboard() {
       </dl-cluster>
 
       <div className="cl-dlite-sem-mt-600 cl-dlite-sem-mb-600">
-        <dl-button variant="primary" onClick={() => setShowCreate(!showCreate)}>
+        <dl-button variant="primary" size="md" onClick={() => setShowCreate(!showCreate)}>
           + New League
         </dl-button>
       </div>
@@ -100,7 +100,7 @@ export default function AdminDashboard() {
       {showCreate && (
         <form onSubmit={handleCreate} className="cl-dlite-sem-mb-600">
           <dl-card>
-            <dl-stack gap="300">
+            <dl-stack direction="vertical" gap="300">
               <dl-input
                 placeholder="League name (e.g. Fantasy Survivor)"
                 value={name}
@@ -113,7 +113,7 @@ export default function AdminDashboard() {
                 required
                 onInput={(e: any) => setSeasonName(getEventValue(e))}
               />
-              <dl-button variant="primary" onClick={handleCreate}>Create League</dl-button>
+              <dl-button variant="primary" size="md" onClick={handleCreate}>Create League</dl-button>
             </dl-stack>
           </dl-card>
         </form>
@@ -122,7 +122,7 @@ export default function AdminDashboard() {
       {leagues.length === 0 ? (
         <dl-text color="secondary">No leagues yet. Create one to get started.</dl-text>
       ) : (
-        <dl-stack gap="300">
+        <dl-stack direction="vertical" gap="300">
           {leagues.map((league) => (
             <dl-card
               key={league.id}
