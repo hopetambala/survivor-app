@@ -5,6 +5,7 @@ import { useRouter, useParams } from "next/navigation";
 import { createClient } from "../../../../../lib/supabase/client";
 import { getEventValue } from "../../../../../dlite-design-system/wc-helpers";
 import { DEFAULT_SCORING_RULES } from "../../../../../lib/scoring";
+import { useConfirm, useToast } from "../../../../../components/AppDialogs";
 import type { ScoringRule } from "../../../../../lib/supabase/types";
 
 export default function ScoringRulesPage() {
@@ -14,10 +15,15 @@ export default function ScoringRulesPage() {
   const [points, setPoints] = useState("");
   const [description, setDescription] = useState("");
   const [isVariable, setIsVariable] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
   const router = useRouter();
   const supabase = createClient();
+  const confirm = useConfirm();
+  const toast = useToast();
 
-  useEffect(() => { loadRules(); }, [leagueId]);
+  useEffect(() => {
+    loadRules();
+  }, [leagueId]);
 
   async function loadRules() {
     const { data } = await supabase
@@ -30,6 +36,7 @@ export default function ScoringRulesPage() {
 
   async function handleAdd(e: React.FormEvent) {
     e.preventDefault();
+    setSubmitting(true);
     const maxOrder = rules.length > 0 ? Math.max(...rules.map((r) => r.sort_order)) : 0;
     await supabase.from("scoring_rules").insert({
       league_id: leagueId,
@@ -43,25 +50,57 @@ export default function ScoringRulesPage() {
     setPoints("");
     setDescription("");
     setIsVariable(false);
+    setSubmitting(false);
     loadRules();
   }
 
   async function handleDelete(id: string) {
-    if (!confirm("Delete this scoring rule?")) return;
+    const ok = await confirm({
+      title: "Delete this scoring rule?",
+      message: "Existing episode events using this rule will also be removed.",
+      confirmLabel: "Delete rule",
+      variant: "danger",
+    });
+    if (!ok) return;
     await supabase.from("scoring_rules").delete().eq("id", id);
     loadRules();
   }
 
   async function handleUpdate(rule: ScoringRule, field: string, value: string | number | boolean) {
-    await supabase.from("scoring_rules").update({ [field]: value }).eq("id", rule.id);
+    await supabase
+      .from("scoring_rules")
+      .update({ [field]: value })
+      .eq("id", rule.id);
     loadRules();
   }
 
   async function handleResetToDefaults() {
-    if (!confirm("This will delete all current rules and restore the default set. Continue?")) return;
-    await supabase.from("scoring_rules").delete().eq("league_id", leagueId);
-    const rows = DEFAULT_SCORING_RULES.map((r) => ({ ...r, league_id: leagueId }));
-    await supabase.from("scoring_rules").insert(rows as Record<string, unknown>[]);
+    const ok = await confirm({
+      title: "Reset scoring rules to defaults?",
+      message: "All current rules will be deleted and replaced with the default set.",
+      confirmLabel: "Reset rules",
+      variant: "danger",
+    });
+    if (!ok) return;
+
+    // Atomic on the server: delete + insert run in a single transaction. If
+    // anything throws, the existing rules survive unchanged.
+    const { error } = await supabase.rpc("reset_scoring_rules", {
+      p_league_id: leagueId,
+      p_rules: DEFAULT_SCORING_RULES.map((r) => ({
+        event_name: r.event_name,
+        points: r.points,
+        description: r.description,
+        is_variable: r.is_variable,
+        sort_order: r.sort_order,
+      })),
+    });
+
+    if (error) {
+      toast(`Failed to reset rules: ${error.message}`, "error");
+      return;
+    }
+    toast("Scoring rules reset to defaults.", "success");
     loadRules();
   }
 
@@ -83,28 +122,50 @@ export default function ScoringRulesPage() {
           <div key={rule.id} className="cl-dlite-card cl-dlite-sem-p-300">
             <dl-cluster justify="between" gap="300">
               <div className="cl-dlite-flex-1">
-                <div className="cl-dlite-sem-font-heading cl-dlite-prim-font-medium cl-dlite-sem-text-300">{rule.event_name}</div>
-                {rule.description && <div className="cl-dlite-sem-text-200 cl-dlite-sem-text-tertiary">{rule.description}</div>}
+                <div className="cl-dlite-sem-font-heading cl-dlite-prim-font-medium cl-dlite-sem-text-300">
+                  {rule.event_name}
+                </div>
+                {rule.description && (
+                  <div className="cl-dlite-sem-text-200 cl-dlite-sem-text-tertiary">
+                    {rule.description}
+                  </div>
+                )}
               </div>
               <div className="cl-dlite-flex cl-dlite-items-center cl-dlite-sem-gap-200">
                 <dl-input
                   type="number"
                   step="0.25"
                   value={String(rule.points)}
-                  onBlur={(e: any) => handleUpdate(rule, "points", parseFloat(getEventValue(e)) || 0)}
+                  onBlur={(e: any) =>
+                    handleUpdate(rule, "points", parseFloat(getEventValue(e)) || 0)
+                  }
                   style={{ width: "4rem" }}
                 />
-                <span className="cl-dlite-sem-text-200 cl-dlite-sem-text-tertiary">{rule.is_variable ? "(var)" : "pts"}</span>
-                <dl-icon-button variant="secondary" size="sm" label="Delete rule" onClick={() => handleDelete(rule.id)}>✕</dl-icon-button>
+                <span className="cl-dlite-sem-text-200 cl-dlite-sem-text-tertiary">
+                  {rule.is_variable ? "(var)" : "pts"}
+                </span>
+                <dl-icon-button
+                  variant="secondary"
+                  size="sm"
+                  label="Delete rule"
+                  onClick={() => handleDelete(rule.id)}
+                >
+                  ✕
+                </dl-icon-button>
               </div>
             </dl-cluster>
           </div>
         ))}
       </dl-stack>
 
-      <form onSubmit={handleAdd} className="cl-dlite-card cl-dlite-sem-p-400 cl-dlite-sem-bg-sunken cl-dlite-sem-mt-600">
+      <form
+        onSubmit={handleAdd}
+        className="cl-dlite-card cl-dlite-sem-p-400 cl-dlite-sem-bg-sunken cl-dlite-sem-mt-600"
+      >
         <dl-stack direction="vertical" gap="300">
-          <span className="cl-dlite-sem-font-heading cl-dlite-prim-font-semibold cl-dlite-sem-text-300">Add Custom Rule</span>
+          <span className="cl-dlite-sem-font-heading cl-dlite-prim-font-semibold cl-dlite-sem-text-300">
+            Add Custom Rule
+          </span>
           <dl-input
             placeholder="Event name"
             value={name}
@@ -121,7 +182,10 @@ export default function ScoringRulesPage() {
               required
               style={{ width: "6rem" }}
             />
-            <dl-checkbox checked={isVariable || undefined} onChange={() => setIsVariable(!isVariable)}>
+            <dl-checkbox
+              checked={isVariable || undefined}
+              onChange={() => setIsVariable(!isVariable)}
+            >
               Variable
             </dl-checkbox>
           </dl-cluster>
@@ -130,7 +194,14 @@ export default function ScoringRulesPage() {
             value={description}
             onInput={(e: any) => setDescription(getEventValue(e))}
           />
-          <dl-button variant="primary" size="md" onClick={handleAdd}>Add Rule</dl-button>
+          <dl-button
+            variant="primary"
+            size="md"
+            disabled={submitting || undefined}
+            onClick={handleAdd}
+          >
+            {submitting ? "Adding…" : "Add Rule"}
+          </dl-button>
         </dl-stack>
       </form>
     </main>

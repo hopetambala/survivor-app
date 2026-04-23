@@ -30,7 +30,9 @@ export default function AttendancePage() {
     setAttendance(attMap);
   }, [leagueId, episodeId, supabase]);
 
-  useEffect(() => { loadData(); }, [loadData]);
+  useEffect(() => {
+    loadData();
+  }, [loadData]);
 
   function cycleAttendance(playerId: string) {
     const current = attendance[playerId] ?? 0;
@@ -63,49 +65,78 @@ export default function AttendancePage() {
   }
 
   if (!episode) {
-    return <main className="page page--centered"><dl-spinner size="md"></dl-spinner></main>;
+    return (
+      <main className="page page--centered">
+        <dl-spinner size="md"></dl-spinner>
+      </main>
+    );
   }
 
   return (
-    <main className="page" style={{ maxWidth: "32rem", marginInline: "auto" }}>
-      <dl-button variant="ghost" size="sm" onClick={() => router.push(`/admin/league/${leagueId}/episodes`)}>
+    <main className="page content-lg">
+      <dl-button
+        variant="ghost"
+        size="sm"
+        onClick={() => router.push(`/admin/league/${leagueId}/episodes`)}
+      >
         &larr; Back to Episodes
       </dl-button>
 
       <dl-cluster justify="between" gap="400">
         <div>
           <dl-heading level={1}>Attendance</dl-heading>
-          <dl-text color="secondary">Episode {episode.episode_number}{episode.title ? ` — ${episode.title}` : ""}</dl-text>
+          <dl-text color="secondary">
+            Episode {episode.episode_number}
+            {episode.title ? ` — ${episode.title}` : ""}
+          </dl-text>
         </div>
-        <dl-button
-          variant="primary"
-          size="md"
-          disabled={saving || undefined}
-          onClick={handleSave}
-        >
-          {saving ? "Saving..." : "Save"}
+        <dl-button variant="primary" size="md" disabled={saving || undefined} onClick={handleSave}>
+          {saving ? "Saving…" : "Save"}
         </dl-button>
       </dl-cluster>
 
       <dl-text size="300" color="secondary">
-        Tap to cycle: <span className="cl-dlite-sem-font-mono">0</span> → <span className="cl-dlite-sem-font-mono">0.5</span> (watched remotely) → <span className="cl-dlite-sem-font-mono">1</span> (attended) → <span className="cl-dlite-sem-font-mono">0</span>
+        Tap to cycle: <span className="cl-dlite-sem-font-mono">0</span> →{" "}
+        <span className="cl-dlite-sem-font-mono">0.5</span> (watched remotely) →{" "}
+        <span className="cl-dlite-sem-font-mono">1</span> (attended) →{" "}
+        <span className="cl-dlite-sem-font-mono">0</span>
       </dl-text>
 
       <div className="cl-dlite-sem-mt-400">
         <dl-stack direction="vertical" gap="200">
           {players.map((player) => {
             const pts = attendance[player.id] ?? 0;
+            const statusLabel =
+              pts === 1 ? "attended" : pts === 0.5 ? "watched remotely" : "not attended";
             return (
               <dl-card
                 key={player.id}
                 interactive
+                role="button"
+                tabIndex={0}
+                aria-label={`${player.name}: ${statusLabel} (${pts} points). Activate to cycle.`}
                 onClick={() => cycleAttendance(player.id)}
+                onKeyDown={(e: React.KeyboardEvent) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    cycleAttendance(player.id);
+                  }
+                }}
               >
                 <dl-cluster justify="between" gap="200">
-                  <span className="cl-dlite-sem-font-heading cl-dlite-prim-font-medium">{player.name}</span>
-                  <span className={`cl-dlite-sem-font-mono cl-dlite-prim-font-bold cl-dlite-sem-text-400 ${
-                    pts === 1 ? "cl-dlite-sem-text-success" : pts === 0.5 ? "cl-dlite-sem-text-warning" : "cl-dlite-sem-text-muted"
-                  }`}>
+                  <span className="cl-dlite-sem-font-heading cl-dlite-prim-font-medium">
+                    {player.name}
+                  </span>
+                  <span
+                    aria-hidden="true"
+                    className={`cl-dlite-sem-font-mono cl-dlite-prim-font-bold cl-dlite-sem-text-400 ${
+                      pts === 1
+                        ? "cl-dlite-sem-text-success"
+                        : pts === 0.5
+                          ? "cl-dlite-sem-text-warning"
+                          : "cl-dlite-sem-text-muted"
+                    }`}
+                  >
                     {pts === 1 ? "1 ✓" : pts === 0.5 ? "0.5" : "0"}
                   </span>
                 </dl-cluster>

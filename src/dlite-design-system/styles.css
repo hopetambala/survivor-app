@@ -7,6 +7,76 @@
  * Only define styles here that are NOT provided by the token package or web components.
  */
 
+/* ===== A11Y UTILITIES ===== */
+.cl-dlite-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.cl-dlite-skip-link {
+  position: absolute;
+  top: -40px;
+  left: 0.5rem;
+  z-index: 1000;
+  padding: 0.5rem 0.75rem;
+  background: var(--tk-dlite-semantic-color-text-primary, #111);
+  color: var(--tk-dlite-semantic-color-background-surface, #fff);
+  border-radius: 0.25rem;
+  text-decoration: none;
+  font-family: var(--tk-dlite-semantic-typography-font-heading), Arial, sans-serif;
+  font-weight: 600;
+  transition: top 120ms ease;
+}
+
+.cl-dlite-skip-link:focus {
+  top: 0.5rem;
+  outline: 2px solid var(--tk-dlite-semantic-color-background-accent, #3b82f6);
+  outline-offset: 2px;
+}
+
+/* ===== ADMIN HEADER ===== */
+.admin-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--tk-dlite-semantic-spacing-300);
+  padding: var(--tk-dlite-semantic-spacing-300) var(--tk-dlite-semantic-spacing-400);
+  border-bottom: 1px solid var(--tk-dlite-semantic-color-border-subtle, rgba(0, 0, 0, 0.08));
+  background: var(--tk-dlite-semantic-color-background-surface, #fff);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.admin-header__brand {
+  display: inline-flex;
+  align-items: baseline;
+  text-decoration: none;
+  color: inherit;
+}
+
+/* ===== DRAFT STATUS STICKY BANNER =====
+ * On mobile, keep the current-pick banner visible while the user scrolls
+ * through the long Available Survivors list. Desktop lays the grid out
+ * side-by-side, so stickiness is only needed under ~768px.
+ */
+@media (max-width: 767px) {
+  .draft-status-sticky {
+    position: sticky;
+    top: 0.5rem;
+    z-index: 5;
+    backdrop-filter: blur(4px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+  }
+}
+
 /* ===== PAGE LAYOUTS ===== */
 
 /* Tables should use the heading (sans-serif) font for UI readability */
@@ -46,6 +116,35 @@
   margin-right: auto;
 }
 
+/* ===== CONTENT WIDTH UTILITIES ===== */
+/* Shared max-widths for form / auth surfaces. Prefer these over inline
+ * style={{ maxWidth: ... }} so the visual rhythm stays consistent.
+ */
+.content-sm {
+  max-width: 20rem;
+  margin-inline: auto;
+}
+.content-md {
+  max-width: 24rem;
+  margin-inline: auto;
+}
+.content-lg {
+  max-width: 32rem;
+  margin-inline: auto;
+}
+
+/* Stylized league-code input on the landing page — large, tracked-out mono. */
+.code-input {
+  text-align: center;
+  font-size: 1.5rem;
+  letter-spacing: 0.1em;
+}
+
+/* Compact number input used for small numeric fields (settings, scoring grid). */
+.input-num-sm {
+  width: 6rem;
+}
+
 /* ===== GRID ===== */
 .grid-2 {
   display: grid;
@@ -53,7 +152,9 @@
 }
 
 @media (min-width: 640px) {
-  .grid-2 { grid-template-columns: repeat(2, 1fr); }
+  .grid-2 {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 
 .grid-responsive {
@@ -63,21 +164,81 @@
 }
 
 @media (min-width: 640px) {
-  .grid-responsive { grid-template-columns: repeat(3, 1fr); }
+  .grid-responsive {
+    grid-template-columns: repeat(3, 1fr);
+  }
 }
 
 @media (min-width: 768px) {
-  .grid-responsive { grid-template-columns: repeat(4, 1fr); }
+  .grid-responsive {
+    grid-template-columns: repeat(4, 1fr);
+  }
 }
 
 /* ===== DRAFT-SPECIFIC ===== */
-.draft-pick--available { background-color: color-mix(in srgb, var(--tk-dlite-semantic-color-feedback-success) 8%, transparent); border-color: color-mix(in srgb, var(--tk-dlite-semantic-color-feedback-success) 30%, transparent); }
-.draft-pick--available:hover { background-color: color-mix(in srgb, var(--tk-dlite-semantic-color-feedback-success) 15%, transparent); }
-.draft-pick--limited { background-color: color-mix(in srgb, var(--tk-dlite-semantic-color-feedback-warning) 8%, transparent); border-color: color-mix(in srgb, var(--tk-dlite-semantic-color-feedback-warning) 30%, transparent); }
-.draft-pick--limited:hover { background-color: color-mix(in srgb, var(--tk-dlite-semantic-color-feedback-warning) 15%, transparent); }
-.draft-pick--taken { background-color: color-mix(in srgb, var(--tk-dlite-semantic-color-feedback-danger) 8%, transparent); border-color: color-mix(in srgb, var(--tk-dlite-semantic-color-feedback-danger) 30%, transparent); opacity: 0.6; cursor: not-allowed; }
-.draft-pick--drafted { background-color: color-mix(in srgb, var(--tk-dlite-semantic-color-action-primary) 8%, transparent); border-color: color-mix(in srgb, var(--tk-dlite-semantic-color-action-primary) 30%, transparent); }
-.draft-pick--drafted:hover { background-color: color-mix(in srgb, var(--tk-dlite-semantic-color-action-primary) 15%, transparent); }
+.draft-pick--available {
+  background-color: color-mix(
+    in srgb,
+    var(--tk-dlite-semantic-color-feedback-success) 8%,
+    transparent
+  );
+  border-color: color-mix(
+    in srgb,
+    var(--tk-dlite-semantic-color-feedback-success) 30%,
+    transparent
+  );
+}
+.draft-pick--available:hover {
+  background-color: color-mix(
+    in srgb,
+    var(--tk-dlite-semantic-color-feedback-success) 15%,
+    transparent
+  );
+}
+.draft-pick--limited {
+  background-color: color-mix(
+    in srgb,
+    var(--tk-dlite-semantic-color-feedback-warning) 8%,
+    transparent
+  );
+  border-color: color-mix(
+    in srgb,
+    var(--tk-dlite-semantic-color-feedback-warning) 30%,
+    transparent
+  );
+}
+.draft-pick--limited:hover {
+  background-color: color-mix(
+    in srgb,
+    var(--tk-dlite-semantic-color-feedback-warning) 15%,
+    transparent
+  );
+}
+.draft-pick--taken {
+  background-color: color-mix(
+    in srgb,
+    var(--tk-dlite-semantic-color-feedback-danger) 8%,
+    transparent
+  );
+  border-color: color-mix(in srgb, var(--tk-dlite-semantic-color-feedback-danger) 30%, transparent);
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+.draft-pick--drafted {
+  background-color: color-mix(
+    in srgb,
+    var(--tk-dlite-semantic-color-action-primary) 8%,
+    transparent
+  );
+  border-color: color-mix(in srgb, var(--tk-dlite-semantic-color-action-primary) 30%, transparent);
+}
+.draft-pick--drafted:hover {
+  background-color: color-mix(
+    in srgb,
+    var(--tk-dlite-semantic-color-action-primary) 15%,
+    transparent
+  );
+}
 
 /* ===== SCORE TOGGLE ===== */
 .score-toggle {
@@ -107,7 +268,11 @@
 /* ===== LEADERBOARD ===== */
 .leader-card--gold {
   border-color: var(--tk-dlite-semantic-color-feedback-warning);
-  background-color: color-mix(in srgb, var(--tk-dlite-semantic-color-feedback-warning) 8%, transparent);
+  background-color: color-mix(
+    in srgb,
+    var(--tk-dlite-semantic-color-feedback-warning) 8%,
+    transparent
+  );
 }
 
 /* ===== STICKY COL ===== */
@@ -120,7 +285,11 @@
 
 /* ===== HIGHLIGHT ROW ===== */
 .row-highlight {
-  background-color: color-mix(in srgb, var(--tk-dlite-semantic-color-feedback-warning) 8%, transparent);
+  background-color: color-mix(
+    in srgb,
+    var(--tk-dlite-semantic-color-feedback-warning) 8%,
+    transparent
+  );
 }
 
 /* ===== RESPONSIVE FLEX ===== */
@@ -130,28 +299,60 @@
 }
 
 @media (min-width: 1024px) {
-  .flex-col-lg-row { flex-direction: row; }
-  .lg-w-72 { width: 18rem; flex-shrink: 0; }
-  .lg-max-h-70vh { max-height: 70vh; overflow-y: auto; }
+  .flex-col-lg-row {
+    flex-direction: row;
+  }
+  .lg-w-72 {
+    width: 18rem;
+    flex-shrink: 0;
+  }
+  .lg-max-h-70vh {
+    max-height: 70vh;
+    overflow-y: auto;
+  }
 }
 
 /* ===== STATUS CARDS ===== */
 .status-card--info {
-  background-color: color-mix(in srgb, var(--tk-dlite-semantic-color-feedback-info) 8%, transparent);
+  background-color: color-mix(
+    in srgb,
+    var(--tk-dlite-semantic-color-feedback-info) 8%,
+    transparent
+  );
   border-color: color-mix(in srgb, var(--tk-dlite-semantic-color-feedback-info) 30%, transparent);
 }
 
 .status-card--success {
-  background-color: color-mix(in srgb, var(--tk-dlite-semantic-color-feedback-success) 8%, transparent);
-  border-color: color-mix(in srgb, var(--tk-dlite-semantic-color-feedback-success) 30%, transparent);
+  background-color: color-mix(
+    in srgb,
+    var(--tk-dlite-semantic-color-feedback-success) 8%,
+    transparent
+  );
+  border-color: color-mix(
+    in srgb,
+    var(--tk-dlite-semantic-color-feedback-success) 30%,
+    transparent
+  );
 }
 
 .status-card--warning {
-  background-color: color-mix(in srgb, var(--tk-dlite-semantic-color-feedback-warning) 8%, transparent);
-  border-color: color-mix(in srgb, var(--tk-dlite-semantic-color-feedback-warning) 30%, transparent);
+  background-color: color-mix(
+    in srgb,
+    var(--tk-dlite-semantic-color-feedback-warning) 8%,
+    transparent
+  );
+  border-color: color-mix(
+    in srgb,
+    var(--tk-dlite-semantic-color-feedback-warning) 30%,
+    transparent
+  );
 }
 
 .status-card--danger {
-  background-color: color-mix(in srgb, var(--tk-dlite-semantic-color-feedback-danger) 8%, transparent);
+  background-color: color-mix(
+    in srgb,
+    var(--tk-dlite-semantic-color-feedback-danger) 8%,
+    transparent
+  );
   border-color: color-mix(in srgb, var(--tk-dlite-semantic-color-feedback-danger) 30%, transparent);
 }

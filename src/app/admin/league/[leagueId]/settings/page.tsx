@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { createClient } from "../../../../../lib/supabase/client";
 import { getEventValue } from "../../../../../dlite-design-system/wc-helpers";
+import { useToast } from "../../../../../components/AppDialogs";
 import type { League } from "../../../../../lib/supabase/types";
 
 export default function LeagueSettings() {
@@ -14,25 +15,25 @@ export default function LeagueSettings() {
   const [survivorCount, setSurvivorCount] = useState(0);
   const [playerCount, setPlayerCount] = useState(0);
   const [saving, setSaving] = useState(false);
-  const [saved, setSaved] = useState(false);
   const router = useRouter();
   const supabase = createClient();
+  const toast = useToast();
 
   useEffect(() => {
     loadData();
   }, [leagueId]);
 
+  // Proxy (src/proxy.ts) already guards /admin/* for authentication; RLS
+  // enforces admin_id = auth.uid() at the database layer. No client-side
+  // auth check needed here.
   async function loadData() {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) { router.push("/admin"); return; }
-
     const [leagueRes, survivorsRes, playersRes] = await Promise.all([
       supabase.from("leagues").select("*").eq("id", leagueId).single(),
       supabase.from("survivors").select("id").eq("league_id", leagueId),
       supabase.from("players").select("id").eq("league_id", leagueId),
     ]);
 
-    if (!leagueRes.data || leagueRes.data.admin_id !== user.id) {
+    if (!leagueRes.data) {
       router.push("/admin/dashboard");
       return;
     }
@@ -54,9 +55,8 @@ export default function LeagueSettings() {
   async function handleSave(e: React.FormEvent) {
     e.preventDefault();
     setSaving(true);
-    setSaved(false);
 
-    await supabase
+    const { error } = await supabase
       .from("leagues")
       .update({
         num_picks_per_player: numPicksPerPlayer,
@@ -65,12 +65,20 @@ export default function LeagueSettings() {
       .eq("id", leagueId);
 
     setSaving(false);
-    setSaved(true);
-    setTimeout(() => setSaved(false), 2000);
+
+    if (error) {
+      toast(`Failed to save settings: ${error.message}`, "error");
+      return;
+    }
+    toast("Settings saved.", "success");
   }
 
   if (!league) {
-    return <main className="page page--centered"><dl-spinner size="md"></dl-spinner></main>;
+    return (
+      <main className="page page--centered">
+        <dl-spinner size="md"></dl-spinner>
+      </main>
+    );
   }
 
   return (
@@ -79,14 +87,28 @@ export default function LeagueSettings() {
         &larr; Back to League
       </dl-button>
       <dl-heading level={1}>League Settings</dl-heading>
-      <dl-text size="300" color="secondary">{league.name} &middot; {league.season_name}</dl-text>
+      <dl-text size="300" color="secondary">
+        {league.name} &middot; {league.season_name}
+      </dl-text>
 
       {/* Current roster info */}
       <div className="cl-dlite-card cl-dlite-sem-p-400 cl-dlite-sem-bg-sunken cl-dlite-sem-mt-600 cl-dlite-sem-mb-600">
-        <span className="cl-dlite-sem-font-heading cl-dlite-prim-font-semibold">Current Roster</span>
+        <span className="cl-dlite-sem-font-heading cl-dlite-prim-font-semibold">
+          Current Roster
+        </span>
         <div className="grid-2 cl-dlite-sem-mt-200 cl-dlite-sem-text-300">
-          <div>Players: <span className="cl-dlite-sem-font-heading cl-dlite-prim-font-medium">{playerCount}</span></div>
-          <div>Survivors: <span className="cl-dlite-sem-font-heading cl-dlite-prim-font-medium">{survivorCount}</span></div>
+          <div>
+            Players:{" "}
+            <span className="cl-dlite-sem-font-heading cl-dlite-prim-font-medium">
+              {playerCount}
+            </span>
+          </div>
+          <div>
+            Survivors:{" "}
+            <span className="cl-dlite-sem-font-heading cl-dlite-prim-font-medium">
+              {survivorCount}
+            </span>
+          </div>
         </div>
       </div>
 
@@ -94,8 +116,12 @@ export default function LeagueSettings() {
         <dl-stack direction="vertical" gap="600">
           {/* Picks per player */}
           <div>
-            <label className="cl-dlite-block cl-dlite-sem-font-heading cl-dlite-prim-font-medium cl-dlite-sem-mb-100">Picks per Player</label>
-            <dl-text size="300" color="secondary">How many survivors each player drafts (their team size).</dl-text>
+            <label className="cl-dlite-block cl-dlite-sem-font-heading cl-dlite-prim-font-medium cl-dlite-sem-mb-100">
+              Picks per Player
+            </label>
+            <dl-text size="300" color="secondary">
+              How many survivors each player drafts (their team size).
+            </dl-text>
             <div className="cl-dlite-sem-mt-200">
               <dl-input
                 type="number"
@@ -103,16 +129,19 @@ export default function LeagueSettings() {
                 max="20"
                 value={String(numPicksPerPlayer)}
                 onInput={(e: any) => setNumPicksPerPlayer(Number(getEventValue(e)))}
-                style={{ width: "6rem" }}
+                className="input-num-sm"
               />
             </div>
           </div>
 
           {/* Max times drafted */}
           <div>
-            <label className="cl-dlite-block cl-dlite-sem-font-heading cl-dlite-prim-font-medium cl-dlite-sem-mb-100">Max Times a Survivor Can Be Drafted</label>
+            <label className="cl-dlite-block cl-dlite-sem-font-heading cl-dlite-prim-font-medium cl-dlite-sem-mb-100">
+              Max Times a Survivor Can Be Drafted
+            </label>
             <dl-text size="300" color="secondary">
-              How many different players can pick the same survivor. Needs to be high enough so every player can fill their team.
+              How many different players can pick the same survivor. Needs to be high enough so
+              every player can fill their team.
             </dl-text>
             <div className="cl-dlite-sem-mt-200">
               <dl-input
@@ -121,34 +150,54 @@ export default function LeagueSettings() {
                 max="50"
                 value={String(maxTimesDrafted)}
                 onInput={(e: any) => setMaxTimesDrafted(Number(getEventValue(e)))}
-                style={{ width: "6rem" }}
+                className="input-num-sm"
               />
             </div>
           </div>
 
           {/* Recommendation / validation */}
-          <div className={`cl-dlite-card cl-dlite-sem-p-400 ${isEnoughSlots ? "status-card--success" : "status-card--danger"}`}>
-            <span className="cl-dlite-sem-font-heading cl-dlite-prim-font-semibold">{isEnoughSlots ? "Looks good" : "Not enough survivor slots"}</span>
+          <div
+            className={`cl-dlite-card cl-dlite-sem-p-400 ${isEnoughSlots ? "status-card--success" : "status-card--danger"}`}
+          >
+            <span className="cl-dlite-sem-font-heading cl-dlite-prim-font-semibold">
+              {isEnoughSlots ? "Looks good" : "Not enough survivor slots"}
+            </span>
             <div className="cl-dlite-sem-text-300">
-              <dl-text size="300">Total picks needed: {playerCount} players × {numPicksPerPlayer} picks = {totalPicksNeeded}</dl-text>
-              <dl-text size="300">Available survivor slots: {survivorCount} survivors × {maxTimesDrafted} max drafts = {totalSurvivorSlots}</dl-text>
+              <dl-text size="300">
+                Total picks needed: {playerCount} players × {numPicksPerPlayer} picks ={" "}
+                {totalPicksNeeded}
+              </dl-text>
+              <dl-text size="300">
+                Available survivor slots: {survivorCount} survivors × {maxTimesDrafted} max drafts ={" "}
+                {totalSurvivorSlots}
+              </dl-text>
               {!isEnoughSlots && survivorCount > 0 && (
                 <div className="cl-dlite-sem-mt-200">
-                  <dl-button variant="ghost" size="sm" onClick={() => setMaxTimesDrafted(recommendedMax)}>
+                  <dl-button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setMaxTimesDrafted(recommendedMax)}
+                  >
                     Set to recommended: {recommendedMax}
                   </dl-button>
                 </div>
               )}
               {survivorCount === 0 && (
-                <dl-text size="300" color="secondary">Add survivors first to see recommendations.</dl-text>
+                <dl-text size="300" color="secondary">
+                  Add survivors first to see recommendations.
+                </dl-text>
               )}
             </div>
           </div>
 
-          <dl-button variant="primary" size="md" disabled={saving || undefined} onClick={handleSave}>
+          <dl-button
+            variant="primary"
+            size="md"
+            disabled={saving || undefined}
+            onClick={handleSave}
+          >
             {saving ? "Saving…" : "Save Settings"}
           </dl-button>
-          {saved && <dl-text size="300" color="secondary" style={{ color: "var(--tk-dlite-semantic-color-feedback-success)" }}>Settings saved!</dl-text>}
         </dl-stack>
       </form>
     </main>

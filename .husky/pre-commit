@@ -1,0 +1,17 @@
+#!/usr/bin/env sh
+
+# Pre-commit hooks run under the shell's default Node, which on macOS with nvm
+# is often the globally-installed one (frequently older than this project's
+# .nvmrc). Modern ESLint / Next tooling relies on Node 17+ globals like
+# structuredClone, so load nvm here and switch to the project's pinned version
+# before running lint-staged.
+if [ -z "$NVM_DIR" ]; then
+  export NVM_DIR="$HOME/.nvm"
+fi
+if [ -s "$NVM_DIR/nvm.sh" ]; then
+  # shellcheck disable=SC1091
+  . "$NVM_DIR/nvm.sh"
+  nvm use --silent >/dev/null 2>&1 || true
+fi
+
+npx lint-staged

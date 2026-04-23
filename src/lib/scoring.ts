@@ -2,26 +2,150 @@ import type { ScoringRule } from "./supabase/types";
 
 // Default scoring rules based on the spreadsheet
 export const DEFAULT_SCORING_RULES: Omit<ScoringRule, "id" | "league_id" | "created_at">[] = [
-  { event_name: "Won team reward", points: 1, description: "Worth nothing if combined with immunity. In 3-team scenario: 1st=1pt, 2nd=0.5pt, 3rd=0.", is_variable: false, sort_order: 1 },
-  { event_name: "Won individual reward", points: 2, description: "Worth nothing if combined with immunity.", is_variable: false, sort_order: 2 },
-  { event_name: "Taken on individual reward", points: 1, description: "Excludes the winner.", is_variable: false, sort_order: 3 },
-  { event_name: "Won team immunity", points: 1, description: null, is_variable: false, sort_order: 4 },
-  { event_name: "Won individual immunity", points: 2, description: null, is_variable: false, sort_order: 5 },
-  { event_name: "Has idol at end of episode (at tribal)", points: 1, description: "Per idol held. Excludes episode where you use it.", is_variable: false, sort_order: 6 },
-  { event_name: "Uses idol (or successful dice)", points: 0.5, description: "0.5 per vote saved. Points go to the person who physically played it.", is_variable: true, sort_order: 7 },
-  { event_name: "Voted off with idol", points: -3, description: "Per idol held when voted off.", is_variable: false, sort_order: 8 },
-  { event_name: "Survived an elimination", points: 1, description: null, is_variable: false, sort_order: 9 },
-  { event_name: "Has episode title or hashtag", points: 0.25, description: "Must be about a specific person/subset, not a whole tribe.", is_variable: false, sort_order: 10 },
-  { event_name: "Goes home with dice", points: -0.5, description: null, is_variable: false, sort_order: 11 },
-  { event_name: "Mini reward victory", points: 0.5, description: "For participants.", is_variable: false, sort_order: 12 },
-  { event_name: "Made final group", points: 2, description: "Final three in modern Survivor.", is_variable: false, sort_order: 13 },
-  { event_name: "Vote in final group", points: 0.5, description: "Per vote cast on you.", is_variable: true, sort_order: 14 },
-  { event_name: "Won Survivor", points: 7.5, description: "Assume all unshown votes go to winner. Gets final group points too.", is_variable: false, sort_order: 15 },
+  {
+    event_name: "Won team reward",
+    points: 1,
+    description:
+      "Worth nothing if combined with immunity. In 3-team scenario: 1st=1pt, 2nd=0.5pt, 3rd=0.",
+    is_variable: false,
+    sort_order: 1,
+  },
+  {
+    event_name: "Won individual reward",
+    points: 2,
+    description: "Worth nothing if combined with immunity.",
+    is_variable: false,
+    sort_order: 2,
+  },
+  {
+    event_name: "Taken on individual reward",
+    points: 1,
+    description: "Excludes the winner.",
+    is_variable: false,
+    sort_order: 3,
+  },
+  {
+    event_name: "Won team immunity",
+    points: 1,
+    description: null,
+    is_variable: false,
+    sort_order: 4,
+  },
+  {
+    event_name: "Won individual immunity",
+    points: 2,
+    description: null,
+    is_variable: false,
+    sort_order: 5,
+  },
+  {
+    event_name: "Has idol at end of episode (at tribal)",
+    points: 1,
+    description: "Per idol held. Excludes episode where you use it.",
+    is_variable: false,
+    sort_order: 6,
+  },
+  {
+    event_name: "Uses idol (or successful dice)",
+    points: 0.5,
+    description: "0.5 per vote saved. Points go to the person who physically played it.",
+    is_variable: true,
+    sort_order: 7,
+  },
+  {
+    event_name: "Voted off with idol",
+    points: -3,
+    description: "Per idol held when voted off.",
+    is_variable: false,
+    sort_order: 8,
+  },
+  {
+    event_name: "Survived an elimination",
+    points: 1,
+    description: null,
+    is_variable: false,
+    sort_order: 9,
+  },
+  {
+    event_name: "Has episode title or hashtag",
+    points: 0.25,
+    description: "Must be about a specific person/subset, not a whole tribe.",
+    is_variable: false,
+    sort_order: 10,
+  },
+  {
+    event_name: "Goes home with dice",
+    points: -0.5,
+    description: null,
+    is_variable: false,
+    sort_order: 11,
+  },
+  {
+    event_name: "Mini reward victory",
+    points: 0.5,
+    description: "For participants.",
+    is_variable: false,
+    sort_order: 12,
+  },
+  {
+    event_name: "Made final group",
+    points: 2,
+    description: "Final three in modern Survivor.",
+    is_variable: false,
+    sort_order: 13,
+  },
+  {
+    event_name: "Vote in final group",
+    points: 0.5,
+    description: "Per vote cast on you.",
+    is_variable: true,
+    sort_order: 14,
+  },
+  {
+    event_name: "Won Survivor",
+    points: 7.5,
+    description: "Assume all unshown votes go to winner. Gets final group points too.",
+    is_variable: false,
+    sort_order: 15,
+  },
 ];
 
-// Generate a random 4-digit league code
+// Crockford Base32 excludes I, L, O, U to avoid visual and phonetic ambiguity.
+// 32 characters, 6 positions = ~1,073M combinations (vs 9,000 for 4-digit codes).
+const CROCKFORD_ALPHABET = "0123456789ABCDEFGHJKMNPQRSTVWXYZ";
+
+// Generate a cryptographically random 6-character league code using Crockford Base32.
+// Uses rejection sampling to avoid modulo bias: bytes >= 32 * floor(256/32) are discarded.
 export function generateLeagueCode(): string {
-  return Math.floor(1000 + Math.random() * 9000).toString();
+  const length = 6;
+  const out: string[] = [];
+  const buf = new Uint8Array(length * 2); // over-allocate to absorb rejections
+  while (out.length < length) {
+    crypto.getRandomValues(buf);
+    for (const byte of buf) {
+      if (byte < 256 - (256 % 32)) {
+        out.push(CROCKFORD_ALPHABET[byte % 32]!);
+        if (out.length === length) break;
+      }
+    }
+  }
+  return out.join("");
+}
+
+// Accepts either the new 6-char Crockford code or a legacy 4-digit code.
+export function isValidLeagueCode(input: string): boolean {
+  return /^[0-9]{4}$/.test(input) || /^[0-9A-HJKMNP-TV-Z]{6}$/.test(input);
+}
+
+// Normalize user input: uppercase, strip whitespace, map common Crockford
+// look-alikes (I→1, L→1, O→0). U is never emitted, so strip it entirely.
+export function normalizeLeagueCode(input: string): string {
+  return input
+    .toUpperCase()
+    .replace(/\s+/g, "")
+    .replace(/[IL]/g, "1")
+    .replace(/O/g, "0")
+    .replace(/U/g, "");
 }
 
 // Determine who picks next in a snake draft
@@ -47,14 +171,24 @@ export interface PlayerScore {
   totalScore: number;
   survivorScore: number;
   attendanceScore: number;
-  episodeScores: { episode: number; survivorScore: number; attendanceScore: number; total: number }[];
+  episodeScores: {
+    episode: number;
+    survivorScore: number;
+    attendanceScore: number;
+    total: number;
+  }[];
 }
 
 export function calculatePlayerScores(
   players: { id: string; name: string }[],
   draftPicks: { player_id: string; survivor_id: string }[],
   episodes: { id: string; episode_number: number }[],
-  episodeEvents: { episode_id: string; survivor_id: string; scoring_rule_id: string; value: number }[],
+  episodeEvents: {
+    episode_id: string;
+    survivor_id: string;
+    scoring_rule_id: string;
+    value: number;
+  }[],
   scoringRules: { id: string; points: number; is_variable: boolean }[],
   attendanceRecords: { episode_id: string; player_id: string; points: number }[]
 ): PlayerScore[] {

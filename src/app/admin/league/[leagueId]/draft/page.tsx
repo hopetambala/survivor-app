@@ -4,6 +4,7 @@ import { useEffect, useState, useCallback } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { createClient } from "../../../../../lib/supabase/client";
 import { getSnakeDraftCurrentPlayer } from "../../../../../lib/scoring";
+import { useToast, useConfirm } from "../../../../../components/AppDialogs";
 import type { Player, Survivor, DraftState, DraftPick } from "../../../../../lib/supabase/types";
 
 export default function DraftPage() {
@@ -16,6 +17,8 @@ export default function DraftPage() {
   const [maxDrafts, setMaxDrafts] = useState(5);
   const router = useRouter();
   const supabase = createClient();
+  const toast = useToast();
+  const confirm = useConfirm();
 
   const loadData = useCallback(async () => {
     const [playersRes, survivorsRes, draftStateRes, picksRes, leagueRes] = await Promise.all([
@@ -23,7 +26,11 @@ export default function DraftPage() {
       supabase.from("survivors").select("*").eq("league_id", leagueId).order("name"),
       supabase.from("draft_state").select("*").eq("league_id", leagueId).single(),
       supabase.from("draft_picks").select("*").eq("league_id", leagueId).order("pick_number"),
-      supabase.from("leagues").select("num_picks_per_player, max_times_drafted").eq("id", leagueId).single(),
+      supabase
+        .from("leagues")
+        .select("num_picks_per_player, max_times_drafted")
+        .eq("id", leagueId)
+        .single(),
     ]);
     setPlayers(playersRes.data || []);
     setSurvivors(survivorsRes.data || []);
@@ -35,7 +42,9 @@ export default function DraftPage() {
     }
   }, [leagueId, supabase]);
 
-  useEffect(() => { loadData(); }, [loadData]);
+  useEffect(() => {
+    loadData();
+  }, [loadData]);
 
   // How many times has each survivor been drafted?
   function draftCountFor(survivorId: string) {
@@ -50,108 +59,105 @@ export default function DraftPage() {
   }
 
   const currentPlayerId = draftState
-    ? getSnakeDraftCurrentPlayer(draftState.draft_order, draftState.current_round, draftState.current_pick_index)
+    ? getSnakeDraftCurrentPlayer(
+        draftState.draft_order,
+        draftState.current_round,
+        draftState.current_pick_index
+      )
     : null;
   const currentPlayer = players.find((p) => p.id === currentPlayerId);
   const totalPicksMade = draftPicks.length;
   const totalPicksNeeded = players.length * numPicks;
   const isDraftDone = totalPicksMade >= totalPicksNeeded;
 
+  // Supabase returns the serialization_failure code (40001) when the
+  // optimistic-version check inside a draft RPC fails. Treat that as "another
+  // admin moved first — reload and let the user retry."
+  function isVersionConflict(error: { code?: string } | null): boolean {
+    return error?.code === "40001";
+  }
+
+  async function handleDraftError(label: string, error: { code?: string; message: string } | null) {
+    if (!error) return;
+    if (isVersionConflict(error)) {
+      toast("The draft was just updated by someone else. Reloading…", "warning");
+    } else {
+      toast(`${label}: ${error.message}`, "error");
+    }
+    await loadData();
+  }
+
   async function startDraft() {
     if (players.length < 2) {
-      alert("Need at least 2 players to start a draft.");
+      toast("Need at least 2 players to start a draft.", "warning");
       return;
     }
     if (survivors.length < 2) {
-      alert("Need at least 2 survivors to start a draft.");
+      toast("Need at least 2 survivors to start a draft.", "warning");
       return;
     }
-    const draftOrder = players.map((p) => p.id);
-    await supabase.from("draft_state").update({
-      status: "in_progress",
-      current_round: 1,
-      current_pick_index: 0,
-      draft_order: draftOrder,
-      updated_at: new Date().toISOString(),
-    }).eq("league_id", leagueId);
-    loadData();
+    const { error } = await supabase.rpc("start_draft", {
+      p_league_id: leagueId,
+      p_draft_order: players.map((p) => p.id),
+    });
+    if (error) {
+      await handleDraftError("Failed to start draft", error);
+      return;
+    }
+    await loadData();
   }
 
   async function makePick(survivorId: string) {
     if (!draftState || !currentPlayerId) return;
 
-    const pickNumber = totalPicksMade + 1;
-    const { error } = await supabase.from("draft_picks").insert({
-      league_id: leagueId,
-      player_id: currentPlayerId,
-      survivor_id: survivorId,
-      round: draftState.current_round,
-      pick_number: pickNumber,
+    const { error } = await supabase.rpc("make_draft_pick", {
+      p_league_id: leagueId,
+      p_player_id: currentPlayerId,
+      p_survivor_id: survivorId,
+      p_expected_version: draftState.version,
     });
 
     if (error) {
-      alert("Failed to make pick: " + error.message);
+      await handleDraftError("Failed to make pick", error);
       return;
     }
-
-    // Advance to next pick
-    let nextPickIndex = draftState.current_pick_index + 1;
-    let nextRound = draftState.current_round;
-
-    if (nextPickIndex >= players.length) {
-      nextPickIndex = 0;
-      nextRound += 1;
-    }
-
-    const newStatus = pickNumber >= totalPicksNeeded ? "completed" : "in_progress";
-
-    await supabase.from("draft_state").update({
-      current_round: nextRound,
-      current_pick_index: nextPickIndex,
-      status: newStatus,
-      updated_at: new Date().toISOString(),
-    }).eq("league_id", leagueId);
-
-    loadData();
+    await loadData();
   }
 
   async function undoLastPick() {
-    if (draftPicks.length === 0) return;
-    if (!confirm("Undo the last pick?")) return;
+    if (draftPicks.length === 0 || !draftState) return;
+    const ok = await confirm({
+      title: "Undo the last pick?",
+      message: "This will remove the most recent selection and rewind the draft one step.",
+      confirmLabel: "Undo",
+    });
+    if (!ok) return;
 
-    const lastPick = draftPicks[draftPicks.length - 1];
-    await supabase.from("draft_picks").delete().eq("id", lastPick.id);
-
-    // Rewind the draft state
-    let prevPickIndex = (draftState?.current_pick_index ?? 1) - 1;
-    let prevRound = draftState?.current_round ?? 1;
-
-    if (prevPickIndex < 0) {
-      prevPickIndex = players.length - 1;
-      prevRound = Math.max(1, prevRound - 1);
+    const { error } = await supabase.rpc("undo_last_draft_pick", {
+      p_league_id: leagueId,
+      p_expected_version: draftState.version,
+    });
+    if (error) {
+      await handleDraftError("Failed to undo pick", error);
+      return;
     }
-
-    await supabase.from("draft_state").update({
-      current_round: prevRound,
-      current_pick_index: prevPickIndex,
-      status: "in_progress",
-      updated_at: new Date().toISOString(),
-    }).eq("league_id", leagueId);
-
-    loadData();
+    await loadData();
   }
 
   async function resetDraft() {
-    if (!confirm("Reset the entire draft? All picks will be deleted.")) return;
-    await supabase.from("draft_picks").delete().eq("league_id", leagueId);
-    await supabase.from("draft_state").update({
-      status: "not_started",
-      current_round: 1,
-      current_pick_index: 0,
-      draft_order: [],
-      updated_at: new Date().toISOString(),
-    }).eq("league_id", leagueId);
-    loadData();
+    const ok = await confirm({
+      title: "Reset the entire draft?",
+      message: "All picks will be deleted. This cannot be undone.",
+      confirmLabel: "Reset draft",
+      variant: "danger",
+    });
+    if (!ok) return;
+    const { error } = await supabase.rpc("reset_draft", { p_league_id: leagueId });
+    if (error) {
+      await handleDraftError("Failed to reset draft", error);
+      return;
+    }
+    await loadData();
   }
 
   return (
@@ -167,7 +173,9 @@ export default function DraftPage() {
       {/* Draft Status */}
       {draftState?.status === "not_started" && (
         <div className="cl-dlite-card cl-dlite-sem-p-400 cl-dlite-sem-mt-600 cl-dlite-sem-mb-600 status-card--info">
-          <dl-text>Ready to start the draft with {players.length} players and {survivors.length} survivors.</dl-text>
+          <dl-text>
+            Ready to start the draft with {players.length} players and {survivors.length} survivors.
+          </dl-text>
           <dl-text size="300" color="secondary">
             Snake order: Round 1 goes 1→{players.length}, Round 2 goes {players.length}→1, etc.
           </dl-text>
@@ -182,7 +190,9 @@ export default function DraftPage() {
       {draftState?.status === "completed" && (
         <div className="cl-dlite-card cl-dlite-sem-p-400 cl-dlite-sem-mt-600 cl-dlite-sem-mb-600 status-card--success">
           <dl-text weight="semibold">Draft Complete! 🎉</dl-text>
-          <dl-text size="300" color="secondary">{totalPicksMade} picks made.</dl-text>
+          <dl-text size="300" color="secondary">
+            {totalPicksMade} picks made.
+          </dl-text>
           <div className="cl-dlite-sem-mt-200">
             <dl-button variant="ghost" size="sm" onClick={resetDraft}>
               Reset Draft
@@ -192,15 +202,21 @@ export default function DraftPage() {
       )}
 
       {draftState?.status === "in_progress" && (
-        <div className="cl-dlite-card cl-dlite-sem-p-400 cl-dlite-sem-mt-600 cl-dlite-sem-mb-600 status-card--warning">
+        <div className="cl-dlite-card cl-dlite-sem-p-400 cl-dlite-sem-mt-600 cl-dlite-sem-mb-600 status-card--warning draft-status-sticky">
           <dl-text size="300" color="secondary">
-            Round {draftState.current_round} &middot; Pick {totalPicksMade + 1} of {totalPicksNeeded}
+            Round {draftState.current_round} &middot; Pick {totalPicksMade + 1} of{" "}
+            {totalPicksNeeded}
           </dl-text>
           <dl-text size="400" weight="bold">
             {currentPlayer?.name}&apos;s turn to pick
           </dl-text>
           <div className="cl-dlite-flex cl-dlite-sem-gap-200 cl-dlite-sem-mt-300">
-            <dl-button variant="ghost" size="sm" disabled={draftPicks.length === 0 || undefined} onClick={undoLastPick}>
+            <dl-button
+              variant="ghost"
+              size="sm"
+              disabled={draftPicks.length === 0 || undefined}
+              onClick={undoLastPick}
+            >
               Undo Last Pick
             </dl-button>
             <dl-button variant="ghost" size="sm" onClick={resetDraft}>
@@ -214,7 +230,9 @@ export default function DraftPage() {
       <div className="flex-col-lg-row cl-dlite-sem-gap-600">
         {/* Draft Board */}
         <div className="cl-dlite-flex-1 cl-dlite-min-w-0">
-          <span className="cl-dlite-sem-font-heading cl-dlite-prim-font-semibold cl-dlite-sem-mb-200 cl-dlite-block">Draft Board</span>
+          <span className="cl-dlite-sem-font-heading cl-dlite-prim-font-semibold cl-dlite-sem-mb-200 cl-dlite-block">
+            Draft Board
+          </span>
           <div className="cl-dlite-overflow-x-auto">
             <dl-table>
               <table>
@@ -222,14 +240,17 @@ export default function DraftPage() {
                   <tr>
                     <th className="cl-dlite-text-left">Player</th>
                     {Array.from({ length: numPicks }, (_, i) => (
-                      <th key={i} className="cl-dlite-text-center">Pick {i + 1}</th>
+                      <th key={i} className="cl-dlite-text-center">
+                        Pick {i + 1}
+                      </th>
                     ))}
                   </tr>
                 </thead>
                 <tbody>
                   {players.map((player) => {
                     const picks = picksForPlayer(player.id);
-                    const isCurrentPick = currentPlayerId === player.id && draftState?.status === "in_progress";
+                    const isCurrentPick =
+                      currentPlayerId === player.id && draftState?.status === "in_progress";
                     return (
                       <tr key={player.id} className={isCurrentPick ? "row-highlight" : ""}>
                         <td className="cl-dlite-sem-font-heading cl-dlite-prim-font-medium cl-dlite-whitespace-nowrap">
@@ -253,20 +274,27 @@ export default function DraftPage() {
         {/* Available Survivors */}
         {draftState?.status === "in_progress" && !isDraftDone && (
           <div className="lg-w-72">
-            <span className="cl-dlite-sem-font-heading cl-dlite-prim-font-semibold cl-dlite-sem-mb-200 cl-dlite-block">Available Survivors</span>
+            <span className="cl-dlite-sem-font-heading cl-dlite-prim-font-semibold cl-dlite-sem-mb-200 cl-dlite-block">
+              Available Survivors
+            </span>
             <div className="cl-dlite-flex cl-dlite-flex-col cl-dlite-sem-gap-200 lg-max-h-70vh">
               {survivors.map((s) => {
                 const count = draftCountFor(s.id);
                 const remaining = maxDrafts - count;
                 let statusClass: string;
+                let statusLabel: string;
                 if (remaining <= 0) {
                   statusClass = "draft-pick--taken";
+                  statusLabel = "unavailable";
                 } else if (remaining === 1) {
                   statusClass = "draft-pick--limited";
+                  statusLabel = "one slot left";
                 } else if (count === 0) {
                   statusClass = "draft-pick--available";
+                  statusLabel = "available";
                 } else {
                   statusClass = "draft-pick--drafted";
+                  statusLabel = "partially drafted";
                 }
                 const available = remaining > 0;
                 return (
@@ -276,9 +304,22 @@ export default function DraftPage() {
                     disabled={!available || undefined}
                     className={statusClass}
                     padding="300"
+                    role="button"
+                    tabIndex={available ? 0 : -1}
+                    aria-label={`${s.name}${s.tribe ? `, ${s.tribe}` : ""}: ${statusLabel}, ${count} of ${maxDrafts} drafted`}
+                    aria-disabled={!available || undefined}
                     onClick={() => available && makePick(s.id)}
+                    onKeyDown={(e: React.KeyboardEvent) => {
+                      if (!available) return;
+                      if (e.key === "Enter" || e.key === " ") {
+                        e.preventDefault();
+                        makePick(s.id);
+                      }
+                    }}
                   >
-                    <div className="cl-dlite-sem-font-heading cl-dlite-prim-font-medium">{s.name}</div>
+                    <div className="cl-dlite-sem-font-heading cl-dlite-prim-font-medium">
+                      {s.name}
+                    </div>
                     <div className="cl-dlite-sem-text-200 cl-dlite-sem-text-tertiary">
                       {s.tribe && `${s.tribe} · `}
                       {count}/{maxDrafts} drafted

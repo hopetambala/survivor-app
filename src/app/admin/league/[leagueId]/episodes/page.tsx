@@ -4,16 +4,22 @@ import { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { createClient } from "../../../../../lib/supabase/client";
 import { getEventValue } from "../../../../../dlite-design-system/wc-helpers";
+import { useConfirm } from "../../../../../components/AppDialogs";
+import EmptyState from "../../../../../components/EmptyState";
 import type { Episode } from "../../../../../lib/supabase/types";
 
 export default function ManageEpisodes() {
   const { leagueId } = useParams<{ leagueId: string }>();
   const [episodes, setEpisodes] = useState<Episode[]>([]);
   const [title, setTitle] = useState("");
+  const [submitting, setSubmitting] = useState(false);
   const router = useRouter();
   const supabase = createClient();
+  const confirm = useConfirm();
 
-  useEffect(() => { loadEpisodes(); }, [leagueId]);
+  useEffect(() => {
+    loadEpisodes();
+  }, [leagueId]);
 
   async function loadEpisodes() {
     const { data } = await supabase
@@ -26,6 +32,7 @@ export default function ManageEpisodes() {
 
   async function handleAdd(e: React.FormEvent) {
     e.preventDefault();
+    setSubmitting(true);
     const nextEp = episodes.length > 0 ? Math.max(...episodes.map((e) => e.episode_number)) + 1 : 1;
     await supabase.from("episodes").insert({
       league_id: leagueId,
@@ -33,11 +40,18 @@ export default function ManageEpisodes() {
       title: title.trim() || null,
     });
     setTitle("");
+    setSubmitting(false);
     loadEpisodes();
   }
 
   async function handleDelete(id: string) {
-    if (!confirm("Delete this episode and all its scores?")) return;
+    const ok = await confirm({
+      title: "Delete this episode?",
+      message: "All scores and attendance records for this episode will be deleted.",
+      confirmLabel: "Delete episode",
+      variant: "danger",
+    });
+    if (!ok) return;
     await supabase.from("episodes").delete().eq("id", id);
     loadEpisodes();
   }
@@ -58,7 +72,14 @@ export default function ManageEpisodes() {
               onInput={(e: any) => setTitle(getEventValue(e))}
             />
           </div>
-          <dl-button variant="primary" size="md" onClick={handleAdd}>+ Add Episode</dl-button>
+          <dl-button
+            variant="primary"
+            size="md"
+            disabled={submitting || undefined}
+            onClick={handleAdd}
+          >
+            {submitting ? "Adding…" : "+ Add Episode"}
+          </dl-button>
         </dl-cluster>
       </form>
 
@@ -67,11 +88,24 @@ export default function ManageEpisodes() {
           <div key={ep.id} className="cl-dlite-card cl-dlite-sem-p-300">
             <dl-cluster justify="between" gap="200">
               <div>
-                <span className="cl-dlite-sem-font-heading cl-dlite-prim-font-semibold">Episode {ep.episode_number}</span>
-                {ep.title && <span className="cl-dlite-sem-text-secondary cl-dlite-sem-ml-200">{ep.title}</span>}
+                <span className="cl-dlite-sem-font-heading cl-dlite-prim-font-semibold">
+                  Episode {ep.episode_number}
+                </span>
+                {ep.title && (
+                  <span className="cl-dlite-sem-text-secondary cl-dlite-sem-ml-200">
+                    {ep.title}
+                  </span>
+                )}
                 {ep.is_scored && <dl-badge variant="success">scored</dl-badge>}
               </div>
-              <dl-icon-button variant="secondary" size="sm" label="Delete episode" onClick={() => handleDelete(ep.id)}>✕</dl-icon-button>
+              <dl-icon-button
+                variant="secondary"
+                size="sm"
+                label="Delete episode"
+                onClick={() => handleDelete(ep.id)}
+              >
+                ✕
+              </dl-icon-button>
             </dl-cluster>
             <div className="cl-dlite-sem-mt-200">
               <dl-cluster gap="200">
@@ -85,7 +119,9 @@ export default function ManageEpisodes() {
                 <dl-button
                   variant="secondary"
                   size="sm"
-                  onClick={() => router.push(`/admin/league/${leagueId}/episodes/${ep.id}/attendance`)}
+                  onClick={() =>
+                    router.push(`/admin/league/${leagueId}/episodes/${ep.id}/attendance`)
+                  }
                 >
                   Attendance
                 </dl-button>
@@ -93,7 +129,12 @@ export default function ManageEpisodes() {
             </div>
           </div>
         ))}
-        {episodes.length === 0 && <dl-text color="secondary">No episodes yet.</dl-text>}
+        {episodes.length === 0 && (
+          <EmptyState
+            title="No episodes yet"
+            message="Add an episode above, then score events and track watch-party attendance."
+          />
+        )}
       </dl-stack>
     </main>
   );

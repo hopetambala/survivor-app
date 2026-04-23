@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { getEventValue } from "../dlite-design-system/wc-helpers";
+import { isValidLeagueCode, normalizeLeagueCode } from "../lib/scoring";
 
 export default function Home() {
   const [code, setCode] = useState("");
@@ -10,9 +11,8 @@ export default function Home() {
 
   function handleJoin(e: React.FormEvent) {
     e.preventDefault();
-    const trimmed = code.trim();
-    if (trimmed.length === 4) {
-      router.push(`/league/${trimmed}`);
+    if (isValidLeagueCode(code)) {
+      router.push(`/league/${code}`);
     }
   }
 
@@ -23,29 +23,34 @@ export default function Home() {
         <dl-text color="secondary">Enter your league code or sign in as commissioner</dl-text>
       </div>
 
-      <form onSubmit={handleJoin} className="cl-dlite-flex cl-dlite-flex-col cl-dlite-items-center cl-dlite-sem-gap-400 cl-dlite-w-full" style={{ maxWidth: "20rem" }}>
+      <form
+        onSubmit={handleJoin}
+        className="cl-dlite-flex cl-dlite-flex-col cl-dlite-items-center cl-dlite-sem-gap-400 cl-dlite-w-full content-sm"
+      >
         <dl-input
           type="text"
-          placeholder="4-digit league code"
+          placeholder="League code"
           value={code}
-          style={{ textAlign: "center", fontSize: "1.5rem", letterSpacing: "0.1em" }}
+          className="code-input"
           onInput={(e: any) => {
-            const val = getEventValue(e).replace(/\D/g, "");
-            setCode(val.slice(0, 4));
+            // Restrict to valid Crockford chars + legacy digits; cap at 6.
+            const normalized = normalizeLeagueCode(getEventValue(e));
+            const stripped = normalized.replace(/[^0-9A-HJKMNP-TV-Z]/g, "").slice(0, 6);
+            setCode(stripped);
           }}
         />
         <dl-button
           variant="primary"
           full-width
           size="md"
-          disabled={code.length !== 4 || undefined}
+          disabled={!isValidLeagueCode(code) || undefined}
           onClick={handleJoin}
         >
           View League
         </dl-button>
       </form>
 
-      <div style={{ maxWidth: "20rem" }} className="cl-dlite-w-full">
+      <div className="cl-dlite-w-full content-sm">
         <dl-divider orientation="horizontal" />
         <div className="cl-dlite-text-center cl-dlite-sem-mt-400">
           <dl-button variant="ghost" size="sm" onClick={() => router.push("/admin")}>

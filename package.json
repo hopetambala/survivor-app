@@ -7,11 +7,19 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
+    "typecheck": "tsc --noEmit",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "db:types": "npx --yes supabase gen types typescript --project-id=$SUPABASE_PROJECT_ID > src/lib/supabase/types.generated.ts && echo '# wrote src/lib/supabase/types.generated.ts — merge convenience exports from types.ts if needed'",
     "prepare": "husky",
     "release": "standard-version",
     "release:minor": "standard-version --release-as minor",
     "release:major": "standard-version --release-as major",
     "release:first": "standard-version --first-release"
+  },
+  "lint-staged": {
+    "*.{ts,tsx,js,jsx,json,css,md}": "prettier --write",
+    "*.{ts,tsx}": "eslint --fix"
   },
   "dependencies": {
     "@supabase/ssr": "^0.9.0",
@@ -31,6 +39,8 @@
     "eslint": "^9",
     "eslint-config-next": "16.1.6",
     "husky": "^9.1.7",
+    "lint-staged": "16.4.0",
+    "prettier": "3.8.3",
     "standard-version": "^9.5.0",
     "typescript": "^5"
   }

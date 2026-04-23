@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { createClient } from "../../../../../lib/supabase/client";
 import { getEventValue } from "../../../../../dlite-design-system/wc-helpers";
+import { useConfirm } from "../../../../../components/AppDialogs";
+import EmptyState from "../../../../../components/EmptyState";
 import type { Player } from "../../../../../lib/supabase/types";
 
 export default function ManagePlayers() {
@@ -12,10 +14,14 @@ export default function ManagePlayers() {
   const [name, setName] = useState("");
   const [bulkNames, setBulkNames] = useState("");
   const [showBulk, setShowBulk] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
   const router = useRouter();
   const supabase = createClient();
+  const confirm = useConfirm();
 
-  useEffect(() => { loadPlayers(); }, [leagueId]);
+  useEffect(() => {
+    loadPlayers();
+  }, [leagueId]);
 
   async function loadPlayers() {
     const { data } = await supabase
@@ -29,6 +35,7 @@ export default function ManagePlayers() {
   async function handleAdd(e: React.FormEvent) {
     e.preventDefault();
     if (!name.trim()) return;
+    setSubmitting(true);
     const nextOrder = players.length + 1;
     await supabase.from("players").insert({
       league_id: leagueId,
@@ -36,13 +43,18 @@ export default function ManagePlayers() {
       draft_order: nextOrder,
     });
     setName("");
+    setSubmitting(false);
     loadPlayers();
   }
 
   async function handleBulkAdd(e: React.FormEvent) {
     e.preventDefault();
-    const names = bulkNames.split("\n").map((n) => n.trim()).filter(Boolean);
+    const names = bulkNames
+      .split("\n")
+      .map((n) => n.trim())
+      .filter(Boolean);
     if (names.length === 0) return;
+    setSubmitting(true);
     const startOrder = players.length + 1;
     const rows = names.map((n, i) => ({
       league_id: leagueId,
@@ -52,11 +64,18 @@ export default function ManagePlayers() {
     await supabase.from("players").insert(rows);
     setBulkNames("");
     setShowBulk(false);
+    setSubmitting(false);
     loadPlayers();
   }
 
   async function handleDelete(id: string) {
-    if (!confirm("Remove this player?")) return;
+    const ok = await confirm({
+      title: "Remove this player?",
+      message: "Their draft picks and attendance records will also be deleted.",
+      confirmLabel: "Remove",
+      variant: "danger",
+    });
+    if (!ok) return;
     await supabase.from("players").delete().eq("id", id);
     loadPlayers();
   }
@@ -69,6 +88,7 @@ export default function ManagePlayers() {
 
     const a = players[idx];
     const b = players[swapIdx];
+    if (!a || !b) return;
     await Promise.all([
       supabase.from("players").update({ draft_order: b.draft_order }).eq("id", a.id),
       supabase.from("players").update({ draft_order: a.draft_order }).eq("id", b.id),
@@ -82,10 +102,15 @@ export default function ManagePlayers() {
         &larr; Back to League
       </dl-button>
       <dl-heading level={1}>Players</dl-heading>
-      <dl-text size="300" color="secondary">Add participants and set their draft order (drag to reorder).</dl-text>
+      <dl-text size="300" color="secondary">
+        Add participants and set their draft order (drag to reorder).
+      </dl-text>
 
       <div className="cl-dlite-sem-mb-400 cl-dlite-sem-mt-400">
-        <dl-tabs value={showBulk ? "bulk" : "one"} onChange={(e: any) => setShowBulk(e.detail.value === "bulk")}>
+        <dl-tabs
+          value={showBulk ? "bulk" : "one"}
+          onChange={(e: any) => setShowBulk(e.detail.value === "bulk")}
+        >
           <dl-tab label="Add One" value="one"></dl-tab>
           <dl-tab label="Bulk Add" value="bulk"></dl-tab>
         </dl-tabs>
@@ -100,7 +125,14 @@ export default function ManagePlayers() {
               value={bulkNames}
               onInput={(e: any) => setBulkNames(getEventValue(e))}
             />
-            <dl-button variant="primary" size="md" onClick={handleBulkAdd}>Add All</dl-button>
+            <dl-button
+              variant="primary"
+              size="md"
+              disabled={submitting || undefined}
+              onClick={handleBulkAdd}
+            >
+              {submitting ? "Adding…" : "Add All"}
+            </dl-button>
           </dl-stack>
         </form>
       ) : (
@@ -114,20 +146,45 @@ export default function ManagePlayers() {
                 onInput={(e: any) => setName(getEventValue(e))}
               />
             </div>
-            <dl-button variant="primary" size="md" onClick={handleAdd}>Add</dl-button>
+            <dl-button
+              variant="primary"
+              size="md"
+              disabled={submitting || undefined}
+              onClick={handleAdd}
+            >
+              {submitting ? "Adding…" : "Add"}
+            </dl-button>
           </dl-cluster>
         </form>
       )}
 
-      <dl-text size="300" color="secondary">{players.length} players</dl-text>
+      <dl-text size="300" color="secondary">
+        {players.length} players
+      </dl-text>
+
+      {players.length === 0 ? (
+        <div className="cl-dlite-sem-mt-400">
+          <EmptyState
+            title="No players yet"
+            message="Add league participants and put them in draft order."
+          />
+        </div>
+      ) : null}
 
       <dl-stack direction="vertical" gap="200">
         {players.map((p, idx) => (
           <div key={p.id} className="cl-dlite-card cl-dlite-sem-p-300">
             <dl-cluster justify="between" gap="200">
               <dl-cluster gap="300">
-                <span className="cl-dlite-sem-font-mono cl-dlite-sem-text-300 cl-dlite-sem-text-tertiary" style={{ width: "1.5rem" }}>{idx + 1}.</span>
-                <span className="cl-dlite-sem-font-heading cl-dlite-prim-font-medium">{p.name}</span>
+                <span
+                  className="cl-dlite-sem-font-mono cl-dlite-sem-text-300 cl-dlite-sem-text-tertiary"
+                  style={{ width: "1.5rem" }}
+                >
+                  {idx + 1}.
+                </span>
+                <span className="cl-dlite-sem-font-heading cl-dlite-prim-font-medium">
+                  {p.name}
+                </span>
               </dl-cluster>
               <dl-cluster gap="100">
                 <dl-icon-button
@@ -148,7 +205,14 @@ export default function ManagePlayers() {
                 >
                   ▼
                 </dl-icon-button>
-                <dl-icon-button variant="secondary" size="sm" label="Delete player" onClick={() => handleDelete(p.id)}>✕</dl-icon-button>
+                <dl-icon-button
+                  variant="secondary"
+                  size="sm"
+                  label="Delete player"
+                  onClick={() => handleDelete(p.id)}
+                >
+                  ✕
+                </dl-icon-button>
               </dl-cluster>
             </dl-cluster>
           </div>
